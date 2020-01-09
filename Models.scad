@@ -1,4 +1,4 @@
-pip=3.5;
+pip=3.35;
 module PPM(pip){
     cube_die=[10,10,20];//the cube dimentions 
     difference(){
@@ -30,4 +30,11 @@ module Pclip(pip){
 }
     
 }
-PPM(pip);
+module pole_grip(pip){
+    difference(){
+        cube([10,10,30]);
+        translate([5,5,0])cylinder(r=pip,h=10,$fn=40);
+    }
+    translate([0,0,20])cube([10,30,10]);
+}
+pole_grip(pip);
