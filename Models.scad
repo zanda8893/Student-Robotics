@@ -1,17 +1,13 @@
 pip=3.35;
-module PPM(pip){
-    cube_die=[10,10,20];//the cube dimentions 
+module poleConnector(pip=3.35){
+    cube_die=[10,10,20];//the cube dimentions
     difference(){
         cube(cube_die);
         translate([5,5,0])cylinder(r=pip,h=10,$fn=40);
-        translate([0,5,15]){
-            rotate([0,90,0]){    
-                cylinder(r=pip,h=10-3,$fn=40);
-            }
-        }
+        translate([0,5,15])rotate([0,90,0])cylinder(r=pip,h=10-3,$fn=40);
     }
 }
-module Pclip(pip){
+module poleClip(pip=3.35){
     difference(){
     union(){
         cylinder(r=pip+3,h=10,$fn=40);
@@ -28,9 +24,9 @@ module Pclip(pip){
         }
     }
 }
-    
+
 }
-module pole_grip(pip){
+module poleGrip(pip=3.35){
     difference(){
         cube([10,10,30]);
         translate([5,5,0])cylinder(r=pip,h=10,$fn=40);
