@@ -1,0 +1,7 @@
+rx = robot x coord
+ry = robot y coord
+ra = angle between robot and x axis
+
+rot_y = angle between the marker and the y-axis
+
+polar.rot_y = the angle between the robot and the marker
