@@ -1,6 +1,6 @@
 import math
 import robot
-
+camaraPos = (200,-50)
 class Arena():
     def __init__(self):
         self.cubeList = []
@@ -16,11 +16,33 @@ class Arena():
             self.cubeList.append(newCube)
 
     def robotPos(self,marker):
+        global camaraPos
         markerType = marker.info.maker_type()
         if markerType == "MARKER_ARENA":
-            #markerNum = marker.info.code()
-            markerNum = 0
-            tx = 718
-            ty = 5750
-            self.rx = tx - marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
-            seff.ry = ty - marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+            markerNum = marker.info.code()
+            if markerNum < 7:
+                ty = 5750
+                tx = (markerNum+1)*718
+                self.ra = 90+marker.oriantation.rot_y()+maker.polar.rot_y()
+                self.rx = tx+marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
+                seff.ry = ty-marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+            elif markerNum < 14:
+                ty = (14-markerNum)*718
+                tx = 5750
+                self.ra = marker.oriantation.rot_y()+maker.polar.rot_y()
+                self.rx = tx-marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+                self.ry = ty-marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
+            elif markerNum < 21:
+                ty = 0
+                tx = (21-markerNum)*718
+                self.ra = 270+marker.oriantation.rot_y()+maker.polar.rot_y()
+                self.rx = tx-marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
+                self.ry = ty+marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+            else:
+                ty = (markerNum-20)*718
+                tx = 0
+                self.ra = 180+marker.oriantation.rot_y()+maker.polar.rot_y()
+                self.rx = tx+marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+                self.ry = ty+marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
+            self.rx = self.rx-camaraPos[0]*math.sin(3.1415*self.ra/180)-camaraPos[1]*math.cos(3.1415*self.ra/180)
+            self.ry = self.ry-camaraPos[1]*math.sin(3.1415*self.ra/180)-camaraPos[0]*math.cos(3.1415*self.ra/180)
