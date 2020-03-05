@@ -8,3 +8,6 @@ ty = token y coord
 rot_y = angle between the marker and the y-axis
 
 polar.rot_y = the angle between the robot and the marker
+
+
+ruggeduinos pin is 2 and 3 
