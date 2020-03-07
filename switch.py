@@ -1,4 +1,3 @@
-import boolean
 from sr.robot import *
 
 R = Robot()
