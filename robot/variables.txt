@@ -9,9 +9,4 @@ rot_y = angle between the marker and the y-axis
 
 polar.rot_y = the angle between the robot and the marker
 
-
-<<<<<<< Updated upstream
-ruggeduinos pin is 2 and 3 
-=======
 ruggeduinos pin is 2 and 3
->>>>>>> Stashed changes
