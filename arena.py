@@ -1,5 +1,6 @@
 import math
-import robot
+from sr.robot import *
+
 camaraPos = (200,-50)
 class Arena():
     def __init__(self):
