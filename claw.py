@@ -1,18 +1,29 @@
 from sr.robot import *
-R = Robot()
+#from button import buttonPressed
+import time
 
-from button import *
+R = Robot.setup()
 
-def close():
-    while buttonPressed():
-        R.motors[1].m1.power = 50
+R.ruggeduino_set_handler_by_fwver("SRcustom",Ruggeduino);
 
-    while not buttonPressed():
-        R.motors[1].m1.power = 0
+R.init()
 
-def open():
+R.wait_start()
+
+def buttonPressed():
+    R.ruggeduinos[0].pin_mode(2, INPUT_PULLUP)
+
+    if R.ruggeduinos[0].digital_read(2) == False:
+        return True
+    else:
+        return False
+
+while True:
     while not buttonPressed():
         R.motors[1].m1.power = -50
-
-    while buttonPressed():
-        R.motors[1].m1.power = 0
+    R.motors[1].m1.power = 0
+    time.sleep(3)
+    R.motors[1].m1.power = 50
+    time.sleep(1)
+    R.motors[1].m1.power = 0
+    time.sleep(3)
