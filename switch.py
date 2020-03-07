@@ -1,5 +1,7 @@
 import boolean
-import robot
+from sr.robot import *
+
+R = Robot()
 
 def switch(robot):
     R.ruggeduinos[0].pin_mode(2, INPUT_PULLUP)

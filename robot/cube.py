@@ -1,5 +1,6 @@
 import math
-import robot
+from sr.robot import *
+
 
 class Cube():
     def __init__(self,marker,rx,ry,ra):
