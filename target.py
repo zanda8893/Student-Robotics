@@ -16,3 +16,11 @@ class target:
             return 0
 
     def getDistence(currentpos, targetpos, self):
+
+#Button code:
+
+R.ruggeduinos[RUGGEDUINO_BOARD_NUMBER].pin_mode(PIN_NO, INPUT)
+
+if pin_NO = R.ruggeduinos[0].digital_read(PIN_NO):
+    pass
+    #Stop motor
