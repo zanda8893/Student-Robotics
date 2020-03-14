@@ -1,5 +1,6 @@
 import math
 from sr.robot import *
+import cube
 
 camaraPos = (200,-50)
 class Arena():
@@ -8,10 +9,11 @@ class Arena():
         self.rx = 0
         self.ry = 0
         self.ra = 0
+        self.R = Robot()
 
     def addCube(self,newCube):
         for cube in self.cubeList:
-            if cube == newCube:
+            if cube.id == newCube.id:
                 found = True
         if found != True:
             self.cubeList.append(newCube)
@@ -19,7 +21,9 @@ class Arena():
     def robotPos(self,marker):
         global camaraPos
         markerType = marker.info.maker_type()
-        if markerType == "MARKER_ARENA":
+        if markerType != "MARKER_ARENA":
+            addCube(Cube(marker,rx,ry,ra))
+        else:
             markerNum = marker.info.code()
             if markerNum < 7:
                 ty = 5750
@@ -47,3 +51,13 @@ class Arena():
                 self.ry = ty+marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
             self.rx = self.rx-camaraPos[0]*math.sin(3.1415*self.ra/180)-camaraPos[1]*math.cos(3.1415*self.ra/180)
             self.ry = self.ry-camaraPos[1]*math.sin(3.1415*self.ra/180)-camaraPos[0]*math.cos(3.1415*self.ra/180)
+
+    def closeCube(self):
+        smallDist=10000
+        closeCube=""
+        for cube in self.cubeList:
+            dist = ((cube.x-self.rx)**2+(cube.y-self.ry)**2)**0.5
+            if smallDist > dist:
+                smallDist = dist
+                closeCube = cube
+        return closeCube
