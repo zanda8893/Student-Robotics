@@ -4,7 +4,7 @@ import time
 
 R = Robot.setup()
 
-R.ruggeduino_set_handler_by_fwver("SRcustom",Ruggeduino);
+R.ruggeduino_set_handler_by_fwver("SRcustom",Ruggeduino)
 
 R.init()
 
