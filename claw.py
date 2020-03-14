@@ -19,11 +19,13 @@ def buttonPressed():
         return False
 
 while True:
-    while not buttonPressed():
-        R.motors[1].m1.power = -50
-    R.motors[1].m1.power = 0
+    while buttonPressed():
+        R.motors[1].m0.power = -50
+    R.motors[1].m0.power = 0
+"""
     time.sleep(3)
     R.motors[1].m1.power = 50
     time.sleep(1)
     R.motors[1].m1.power = 0
     time.sleep(3)
+"""
