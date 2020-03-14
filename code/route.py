@@ -65,6 +65,8 @@ class Route():
     def followRoute(self,currentPos,orientation): #returns left and right motor speeds
         p = self.points[0]
         if (currentPos.x-p.x)**2 + (currentPos.y-p.y)**2 < 50**2:
+            if len(self.points) <= 1:
+                return 0,0
             self.points.remove(0)
             p = self.points[0]
         a = math.atan((p.y-currentPos.y)/(p.x-currentPos.x))*180/math.pi
