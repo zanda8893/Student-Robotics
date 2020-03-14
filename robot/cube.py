@@ -7,4 +7,4 @@ class Cube():
             self.color = marker.info.marker_type
             self.code = marker.info.code
     def distance(self,marker):
-        marker.dist
+        self.dist = marker.dist
