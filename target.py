@@ -1,4 +1,4 @@
-class target:
+class Target:
 
     def __init__(self):
         position = []
