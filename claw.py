@@ -9,7 +9,6 @@ class claw(object):
         self.grabbing = False
         self.grabbed = False
         self.R = Robot()
-
         self.R.ruggeduino_set_handler_by_fwver("SRcustom",Ruggeduino)
         self.R.init()
         self.R.wait_start()
