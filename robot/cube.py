@@ -8,5 +8,3 @@ class Cube():
             self.y = ry + (math.cos(ra + p.polar.rot_y))
             self.bearing = p.orientation.rot_y - (90 - p.polar.rot_y - ra)
             self.color = marker.info.marker_type
-    def distance(self,marker):
-        marker.dist
