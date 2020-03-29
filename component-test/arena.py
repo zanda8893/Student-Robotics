@@ -23,4 +23,4 @@ class Arena():
             tx = 718
             ty = 5750
             self.rx = tx - marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
-            seff.ry = ty - marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+            self.ry = ty - marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
