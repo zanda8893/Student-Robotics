@@ -7,24 +7,31 @@ while True:
     if status == "IDLE":
         status = "CUBES_SEARCHING"
     else if status == "CUBES_SEARCHING":
+        print("Searching for cubes...")
         #search for markers
         if arena.availableCubes() == 0: #no available cubes
+            print("Couldn't find any cubes")
             status = "CUBES_ROTATING"
             #---set motors to rotating slowly---
         else:
+            print("Found a cube!")
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
     else if status == "CUBES_ROTATING":
+        print("Rotating in the hope of finding a cube...")
         #stop motors
         time.sleep(0.1)
         #search for cubes
         if arena.availableCubes() != 0:
+            print("Found a cube!")
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
             #---stop motors---
     else if status == "CUBES_ROUTING":
+        print("Trying to find a route to the cube")
         route.setRoute(arena.getCurrentPosition(),currentCube.position,corner);
         if currentCube.isRaised() and not clawIsUp:
+            
             clawIsUp = True
             status = "CLAW_LIFTING"
         else if not currentCube.isRaised() and clawIsUp:
