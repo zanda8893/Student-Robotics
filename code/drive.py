@@ -2,13 +2,15 @@
 import time
 import threading
 
-drive_active = False
-
 #must be held to set the drive
 drive_lock = threading.Lock()
 
-#signalled when current state is to be overridden
-override_cond = threading.Condition(drive_lock)
+#time at which to turn off motors, negative if never
+stop_time = -1
+stop_lock = threading.Lock()
+stop_cond = threading.Condition(stop_lock)
+
+killed = False
 
 #set drive - do not use from outside this file
 def setDrive(l,r):
@@ -16,76 +18,98 @@ def setDrive(l,r):
     #robot_obj.R.motors[0].m0.power = l
     #robot_obj.R.motors[0].m1.power = r
 
+def watchStopTime():
+    global stop_cond,stop_time,drive_lock,killed
+    stop_cond.acquire()
+    while True:
+        if killed:
+            break
+        if stop_time > 0 and time.time() >= stop_time:
+            drive_lock.acquire()
+            setDrive(0,0)
+            drive_lock.release()
+            stop_time = -1
+            stop_cond.notify_all()
+        else:
+            stop_cond.wait(timeout=(stop_time - time.time()))
+    stop_cond.release()
+
+
+def kill():
+    global stop_cond,drive_lock,killed
+    stop_cond.acquire()
+    drive_lock.acquire()
+    setDrive(0,0)
+    killed = True
+    stop_cond.notify_all()
+    drive_lock.release()
+    stop_cond.release()
+    
+def driveWait():
+    global stop_cond,stop_time
+    stop_cond.acquire()
+    while stop_time >= 0:
+        stop_cond.wait()
+    stop_cond.release()
+
+def drive(left,right,t):
+    global drive_lock,stop_cond,stop_time
+
+    drive_lock.acquire()
+    setDrive(left,right)
+    drive_lock.release()
+
+    stop_cond.acquire()
+
+    if t >= 0:
+        stop_time = time.time() + t
+        stop_cond.notify_all()
+    else:
+        stop_time = -1
+        stop_cond.notify_all()
+
+    stop_cond.release()
+
+    
 #drive in a striaght line for t seconds
 #negative t means it sets the power indefinitely
 def driveStraightSync(power,t):
-    global drive_lock,override_cond
-
-    if not override_cond.locked():
-        override_cond.acquire()
-        
-    drive_active = True
-    override_cond.notify_all() 
-    
-    setDrive(power,power)
-
-    res = True
-    if t < 0:
-        override_cond.wait() #run indefinitely (until overridden)
-    else:
-        #wait until another thread sets the drive or timeout
-        res = override_cond.wait(timeout=t)
-
-    if not res: #timed out
-        setDrive(0,0)
-        drive_active = False
-        inactive_cond.notify_all()
-        
-    override_cond.release()
+    drive(power,power,t)
+    driveWait()
     
 #drive in a straight line in the background
 def driveStraight(power,t=-1):
-    global drive_lock
-    drive_lock.acquire()
-    while drive_active == False:
-        inactive_cond.wait()
-    drive_active = True
-    override_cond.notify_all()
+    drive(power,power,t)
 
-    setDrive(power,power)
-    res = True
-    if t < 0:
-        override_cond.wait()
-    else:
-        res = override_cond.wait(timeout=t)
-
-    
-    thr = threading.Thread(target=driveStraightSync,args=(power,t))
-    thr.start()
-
-#rotate anticlockwise at power p synchronously
 def driveRotateSync(power,t):
-    global drive_lock,override_cond
-    drive_lock.acquire()
-    override_cond.notify_all()
-    setDrive(power,-power)
-
-    res = True
-    if t < 0:
-        override_cond.wait()
-    else:
-        res = override_cond.wait(timeout=t)
-
-    if not res:
-        setDrive(0,0)
-    drive_lock.release()
-
+    drive(power,-power,t)
+    driveWait()
 
 #rotate anticlockwise asynchronously
 def driveRotate(power,t=-1):
-    thr = threading.Thread(target=driveRotateSync,args=(power,t))
-    thr.start()
+    drive(power,-power,t)
 
-#wait for drive to finish
-def waitDrive():
-    pass
+#true if all asynchronnous operations have finished
+def driveDone():
+    global stop_cond,stop_time
+    stop_cond.acquire()
+    ret = False
+    if stop_time < 0:
+        ret = True
+    stop_cond.release()
+    return ret
+
+wst = threading.Thread(target=watchStopTime)
+wst.start()
+
+driveStraightSync(1,1)
+driveStraight(2)
+driveStraight(3)
+driveStraight(4)
+time.sleep(1)
+driveStraight(5,2)
+time.sleep(1)
+driveStraight(6,2)
+driveWait()
+
+kill()
