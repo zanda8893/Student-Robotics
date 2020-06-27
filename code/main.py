@@ -6,7 +6,7 @@ eventTimer = -1 #used to time events
 while True:
     if status == "IDLE":
         status = "CUBES_SEARCHING"
-    else if status == "CUBES_SEARCHING":
+    elif status == "CUBES_SEARCHING":
         #search for markers
         if arena.availableCubes() == 0: #no available cubes
             status = "CUBES_ROTATING"
@@ -14,7 +14,7 @@ while True:
         else:
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
-    else if status == "CUBES_ROTATING":
+    elif status == "CUBES_ROTATING":
         #stop motors
         time.sleep(0.1)
         #search for cubes
@@ -22,17 +22,17 @@ while True:
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
             #---stop motors---
-    else if status == "CUBES_ROUTING":
+    elif status == "CUBES_ROUTING":
         route.setRoute(arena.getCurrentPosition(),currentCube.position,corner);
         if currentCube.isRaised() and not clawIsUp:
             clawIsUp = True
             status = "CLAW_LIFTING"
-        else if not currentCube.isRaised() and clawIsUp:
+        elif not currentCube.isRaised() and clawIsUp:
             clawIsUp = False
             status = "CLAW_LIFTING"
         else:
             status = "GOING_TO_CUBE"
-    else if status == "CLAW_LIFTING":
+    elif status == "CLAW_LIFTING":
         if clawIsUp and currTime-eventTimer>2500: #been >2.5s and claw lifting
             #stop lift motor
             status = "GOING_TO_CUBE"
@@ -48,7 +48,7 @@ while True:
             #start grabbing
         #set motors
     elif status == "CLAW_GRABBING":
-        
+
 
 
 
