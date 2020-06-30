@@ -6,8 +6,12 @@ eventTimer = -1 #used to time events
 while True:
     if status == "IDLE":
         status = "CUBES_SEARCHING"
+<<<<<<< HEAD
+    elif status == "CUBES_SEARCHING":
+=======
     else if status == "CUBES_SEARCHING":
         print("Searching for cubes...")
+>>>>>>> b96f070ec5d3eb1f59eecc0771c15b6f57b3a0b4
         #search for markers
         if arena.availableCubes() == 0: #no available cubes
             print("Couldn't find any cubes")
@@ -17,8 +21,12 @@ while True:
             print("Found a cube!")
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
+<<<<<<< HEAD
+    elif status == "CUBES_ROTATING":
+=======
     else if status == "CUBES_ROTATING":
         print("Rotating in the hope of finding a cube...")
+>>>>>>> b96f070ec5d3eb1f59eecc0771c15b6f57b3a0b4
         #stop motors
         time.sleep(0.1)
         #search for cubes
@@ -27,19 +35,23 @@ while True:
             currentCube = arena.getBestCube()
             status = "CUBES_ROUTING"
             #---stop motors---
+<<<<<<< HEAD
+    elif status == "CUBES_ROUTING":
+=======
     else if status == "CUBES_ROUTING":
         print("Trying to find a route to the cube")
+>>>>>>> b96f070ec5d3eb1f59eecc0771c15b6f57b3a0b4
         route.setRoute(arena.getCurrentPosition(),currentCube.position,corner);
         if currentCube.isRaised() and not clawIsUp:
             
             clawIsUp = True
             status = "CLAW_LIFTING"
-        else if not currentCube.isRaised() and clawIsUp:
+        elif not currentCube.isRaised() and clawIsUp:
             clawIsUp = False
             status = "CLAW_LIFTING"
         else:
             status = "GOING_TO_CUBE"
-    else if status == "CLAW_LIFTING":
+    elif status == "CLAW_LIFTING":
         if clawIsUp and currTime-eventTimer>2500: #been >2.5s and claw lifting
             #stop lift motor
             status = "GOING_TO_CUBE"
@@ -55,7 +67,7 @@ while True:
             #start grabbing
         #set motors
     elif status == "CLAW_GRABBING":
-        
+
 
 
 
