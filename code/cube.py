@@ -1,23 +1,28 @@
 import math
 from sr.robot import *
-
-R = Robot()
-markers = R.see()
+from robot_obj import R
+import deg
+import position
 
 class Cube():
-    def __init__(self,marker,rx,ry):
-            self.x = rx + math.cos((ra) * d)
-            self.y = ry + math.sin((ra) * d)
-            self.color = m.info.marker_type
+    def __init__(self,marker,rx,ry,ra):
+        self.x = rx + deg.cos(ra - marker.rot_y) * marker.dist*1000
+        self.y = ry + deg.sin(ra - marker.rot_y) * marker.dist*1000
+        self.a = (marker.orientation.rot_y + ra) % 90
+        self.color = m.info.marker_type
+    #functions that define how the cube is printed
+    def __str__(self):
+        return "x: {0}  y: {1}  col: {2}".format(self.x,self.y,self.color)
+    def __repr__(self):
+        return self.__str__()
+    
 
-#robot coords in green zone
-rx = -2.37503
-ry = -2.37503
-
-for m in markers:
-    if m.info.marker_type != MARKER_ARENA:
-        ra = math.fabs(m.orientation.rot_y)
-        ra = math.radians(ra)
-        d = m.dist
-        print('Color:',m.info.marker_type,'#:',m.info.code,'dist:',m.dist,'angle:',m.orientation.rot_y)
-        print('x:',Cube(rx,ry,ra).x,'y:',Cube(rx,ry,ra).y)
+while True:
+    markers = R.see()
+    #use the arena markers to calculate robot's x,y,angle
+    x = position.findPosition(markers)
+    robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
+    for m in markers:
+        #make cube, print cube
+        c = Cube(m,robot_x,robot_y,robot_a)
+        print("Code: {0}  {1}".format(m.info.code,c))
