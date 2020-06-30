@@ -23,24 +23,41 @@ class Position:
         
 import markers
 
-
+weird_constant = 212
+def wtf(rp,side):
+    if side==0:
+        rp.x += weird_constant
+    elif side==1:
+        rp.y -= weird_constant
+    elif side==2:
+        rp.x -= weird_constant
+    else:
+        rp.y += weird_constant
+    return rp
 
 #returns a list containing the Position and angle of the robot
 def findInfoMarker(marker):
+    #angle between normal to marker and line between marker and robot
     ang = marker.orientation.rot_y - marker.centre.polar.rot_y
     mp = markers.markerCoordinate(marker)
     ma = markers.markerAngle(marker)
     d = marker.centre.polar.length * 1000 #convert to mm
-    #cam_p = Position(1000*marker.center.world.x,1000*marker.center.world.z)
+    #position of robot relative to marker
     p = Position(d*deg.cos(ang),d*deg.sin(ang))
-    print("      angle: {0}".format(ang))
     
-    ra = (ang + ma + 180) % 360
+    ra = (marker.orientation.rot_y + ma + 180) % 360
     rp = mp + p.rotate(ma)
+
+    side = markers.markerSide(marker)
+    rp = wtf(rp,side)
     
+    #print("Robot angle: {0}, Robot position: {1}, d: {2}".format(ra,rp,d))
+    #print("Angle: {0}, Code: {1}, Or: {2}, Pol: {3}".format(ang,marker.info.code,marker.orientation.rot_y,marker.centre.polar.rot_y))
+    print("Pos: {0} Code: {1}".format(rp,marker.info.code))
     return [rp,ra]
     
-
+#gets an average over several markers
+#returns None if there were no arena markers
 def findPosition(markers):
     total = [Position(0,0),0] #position, angle
     n = 0
@@ -49,7 +66,6 @@ def findPosition(markers):
             continue
         n += 1
         x = findInfoMarker(m)
-        print("   Info {0}: {1}".format(n,x))
         total[0] = total[0] + x[0]
         total[1] = total[1] + x[1]
     if n==0:

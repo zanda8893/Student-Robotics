@@ -1,42 +1,8 @@
 import position
+import arena
 
-def targetStraightLine(s,e,corner):
-    if corner == 0:
-        cornerPos = Position(1500,1500)
-        if s.x < cornerPos.x and e.x < cornerPos.x:
-            return True
-        if s.y < cornerPos.y and e.y < cornerPos.y:
-            return True
-        if cornerPos.y-s.y > (cornerPos.x-s.x)*(e.y-s.y)/(e.x-s.x):
-            return True
-        return False
-    if corner == 0:
-        cornerPos = Position(1500,1500)
-        if s.x < cornerPos.x and e.x < cornerPos.x:
-            return True
-        if s.y < cornerPos.y and e.y < cornerPos.y:
-            return True
-        if cornerPos.y-s.y > (cornerPos.x-s.x)*(e.y-s.y)/(e.x-s.x):
-            return True
-        return False
-    if corner == 0:
-        cornerPos = Position(1500,1500)
-        if s.x < cornerPos.x and e.x < cornerPos.x:
-            return True
-        if s.y < cornerPos.y and e.y < cornerPos.y:
-            return True
-        if cornerPos.y-s.y > (cornerPos.x-s.x)*(e.y-s.y)/(e.x-s.x):
-            return True
-        return False
-    if corner == 0:
-        cornerPos = Position(1500,1500)
-        if s.x < cornerPos.x and e.x < cornerPos.x:
-            return True
-        if s.y < cornerPos.y and e.y < cornerPos.y:
-            return True
-        if cornerPos.y-s.y > (cornerPos.x-s.x)*(e.y-s.y)/(e.x-s.x):
-            return True
-        return False
+def isStraightLine(start,end):
+    if
 
 def getIntermediatePoint(corner){
     if corner==0:
