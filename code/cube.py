@@ -16,7 +16,8 @@ ry = -2.37503
 
 for m in markers:
     if m.info.marker_type != MARKER_ARENA:
-        ra = math.radians(m.orientation.rot_y) + math.radians(m.orientation.rot_y)
+        ra = math.fabs(m.orientation.rot_y)
+        ra = math.radians(ra)
         d = m.dist
         print('Color:',m.info.marker_type,'#:',m.info.code,'dist:',m.dist,'angle:',m.orientation.rot_y)
         print('x:',Cube(rx,ry,ra).x,'y:',Cube(rx,ry,ra).y)
