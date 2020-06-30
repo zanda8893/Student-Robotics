@@ -1,5 +1,4 @@
-from position.py import Position
-
+import position
 
 def targetStraightLine(s,e,corner):
     if corner == 0:
