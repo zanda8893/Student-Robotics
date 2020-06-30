@@ -8,7 +8,7 @@ class Cube():
     def __init__(self,marker,rx,ry,ra):
         self.x = rx + deg.cos(ra - marker.rot_y) * marker.dist*1000
         self.y = ry + deg.sin(ra - marker.rot_y) * marker.dist*1000
-        self.a = (marker.orientation.rot_y + ra) % 90
+        self.a = (marker.orientation.rot_y + ra) % 360
         self.color = m.info.marker_type
     #functions that define how the cube is printed
     def __str__(self):
