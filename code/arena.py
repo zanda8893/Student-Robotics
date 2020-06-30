@@ -1,26 +1,104 @@
 import math
 import robot
+import position
+import cube
+
+def pathHitsCube(start,end,cube,minDist):
+    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
+    a2 = deg.atan((cube.y-start.y)/(cube.x-start.x))
+    a = a1 - a2
+    d = math.dist((cube.x,cube.y),(start.x,start.y))
+    opp = d * deg.sin(a)
+    return opp < minDist
+
+def orientation(p1,p2,p3):
+    #clockise,anticlockwise,straight = 1,2,0
+    m = (p1.y-p2.y)/(p1.x-p2.x)
+    c = p1.y - m*p1.x
+    if p3.y > m*p3.x + c:
+        return 2
+    if p3.y == m*p3.x + c:
+        return 0
+    return 1
+
+def linesIntersect(l1,l2):
+    o1 = orientation(l1[0],l1[1],l2[0])
+    o2 = orientation(l1[0],l1[1],l2[1])
+    if o1 == 0 or o2 == 0:
+        return True
+    if o1 == o2:
+        return False
+    return True
+
+def pathHitsPlatform(start,end,minDist):
+    a,b = 5750/2-600-minDist,5750/2+600+minDist
+    l = (Position(a,a),Position(b,b))
+    if linesIntersect((start,end),l):
+        return True
+    l = (Position(a,b),Position(b,a))
+    if linesIntersect((start,end),l):
+        return True
+    return False
+
+def cubeInZone(cube,zone):
+    t = 0
+    if zone == 0:
+        t = cube.x + cube.y
+    elif zone == 1:
+        t = cube.x + (5750 - cube.y)
+    elif zone == 2:
+        t = (5750 - cube.x) + (5750 - cube.y)
+    else:
+        t = (5750 - cube.x) + cube.y
+    return t < 2500
+
+#closest the centre of the robot can get to the centre of
+#the cube to avoid contact
+robot_cube_distance = 300
+#closest the centre of the robot can get to the platform
+robot_plaform_distance = 200
 
 class Arena():
     def __init__(self):
         self.cubeList = []
-        self.rx = 0
-        self.ry = 0
-        self.ra = 0
 
     def addCube(self,newCube):
         for cube in self.cubeList:
-            if cube == newCube:
+            if cube.code == newCube.code:
                 found = True
         if found != True:
             self.cubeList.append(newCube)
 
-    def robotPos(self,marker):
-        markerType = marker.info.maker_type()
-        if markerType == "MARKER_ARENA":
-            #markerNum = marker.info.code()
-            markerNum = 0
-            tx = 718
-            ty = 5750
-            self.rx = tx - marker.info.dist()*math.sin(3.1415*marker.info.oriantation()/180)
-            self.ry = ty - marker.info.dist()*math.cos(3.1415*marker.info.oriantation()/180)
+    def getNearest(self,p,col):
+        i = -1
+        old = 100000
+        for ind in range(self.cubeList.length()):
+            cube = self.cubeList[ind]
+            if cube.color != col:
+                continue
+            if cubeInZone(cube,R.zone):
+                continue
+            newD = math.dist((cube.x,cube.y),(p.x,p.y))
+            if newD < old:
+                old = newD
+                i = ind
+        if i >= 0:
+            return self.cubeList[i]
+        return None
+
+    def removeCube(self,code):
+        for i in range(self.cubeList.length()):
+            if self.cubeList[i].code == code:
+                self.cubeList.pop(i)
+                return True
+        return False
+    
+    def pathClear(start,end):
+        for cube in self.cubeList:
+            if pathHitsCube(start,end,cube,robot_cube_distance):
+                return False
+        if pathHitsPlatform(start,end,robot_platform_distance):
+            return False
+        return True
+
+    
