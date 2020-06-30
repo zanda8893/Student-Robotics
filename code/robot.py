@@ -4,7 +4,7 @@ import robot_obj
 
 while True:
     markers = robot_obj.R.see()
-    print(findPosition(markers))
+    print(position.findPosition(markers))
     robot_obj.R.sleep(1)
 
     
