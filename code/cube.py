@@ -22,6 +22,11 @@ class Cube():
         self.a = (ra - marker.orientation.rot_y + 180) % 360
         self.x = rx + deg.sin(ra - marker.rot_y) * marker.dist*1000
         self.y = ry + deg.cos(ra - marker.rot_y) * marker.dist*1000
+
+        #apply corrections to x and y due to size of cube
+        self.x -= deg.cos(self.a) * 100
+        self.y -= deg.sin(self.a) * 100
+        
         self.color = m.info.marker_type
 
     #functions that define how the cube is printed
