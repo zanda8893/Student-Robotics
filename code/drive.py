@@ -1,6 +1,20 @@
-#import robot_obj
+import robot_obj
 import time
 import threading
+
+"""
+Functions you're allowed to use:
+kill() - should be called when the entire code exits
+driveStraightSync(power,t) - drive straight at power ~power~ for t seconds
+driveStraight(power,t) - as above but asynchronously.
+                         Negative t makes it drive indefinitely
+driveRotateSync(power,t) - same as driveStraightSync() but rotates
+driveRotate(power,t) - same as driveStraight() but rotates
+driveDone() - True if drive not pending turn-off (ie either stopped or
+              moving indefinitely)
+driveWait() - returns once the drive has finished (note that it returns
+              immediately if the drive is moving indefinitely)
+"""
 
 #must be held to set the drive
 drive_lock = threading.Lock()
@@ -14,16 +28,14 @@ killed = False
 
 #set drive - do not use from outside this file
 def setDrive(l,r):
-    print("Setting drive to {0},{1} at {2}".format(l,r,time.time()))
-    #robot_obj.R.motors[0].m0.power = l
-    #robot_obj.R.motors[0].m1.power = r
+    #print("Setting drive to {0},{1} at {2}".format(l,r,time.time()))
+    robot_obj.R.motors[0].m0.power = l
+    robot_obj.R.motors[0].m1.power = r
 
 def watchStopTime():
     global stop_cond,stop_time,drive_lock,killed
     stop_cond.acquire()
-    while True:
-        if killed:
-            break
+    while not killed:
         if stop_time > 0 and time.time() >= stop_time:
             drive_lock.acquire()
             setDrive(0,0)
@@ -33,7 +45,6 @@ def watchStopTime():
         else:
             stop_cond.wait(timeout=(stop_time - time.time()))
     stop_cond.release()
-
 
 def kill():
     global stop_cond,drive_lock,killed
@@ -55,11 +66,11 @@ def driveWait():
 def drive(left,right,t):
     global drive_lock,stop_cond,stop_time
 
+    stop_cond.acquire()
+    
     drive_lock.acquire()
     setDrive(left,right)
     drive_lock.release()
-
-    stop_cond.acquire()
 
     if t >= 0:
         stop_time = time.time() + t

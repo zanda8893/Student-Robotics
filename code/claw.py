@@ -2,6 +2,18 @@ import robot_obj
 import time
 import threading
 
+"""
+Functions you're allowed to use:
+grabClaw() - clamps claw asynchronously
+openClaw() - opens claw asynchronously
+grabClawSync() - clamps claw synchronously
+openClawSync() - opens claw synchronously
+clawIsClamped() - wait until claw has finished moving, then 
+                  return true if the claw is clamped
+clawIsFinished() - True if the claw has finished
+waitOnClaw() - returns once the claw has finished moving
+"""
+
 releasing_time = 1
 
 claw_lock = threading.Lock()
@@ -28,16 +40,6 @@ def stopClawOnPress(timeout=-1):
     setClaw(0)
     return x
 
-#closes claw asynchronously
-def grabClaw():
-    thr = threading.Thread(target=grabClawSync)
-    thr.start()
-
-#opens claw asynchronously
-def openClaw():
-    thr = threading.Thread(target=openClawSync)
-    thr.start()
-
 #closes claw synchronously
 def grabClawSync():
     global claw_lock,claw_is_closed
@@ -50,6 +52,11 @@ def grabClawSync():
     stopClawOnPress()
     claw_lock.release()
 
+#closes claw asynchronously
+def grabClaw():
+    thr = threading.Thread(target=grabClawSync)
+    thr.start()
+    
 #opens claw synchronously
 def openClawSync():
     global claw_lock,claw_is_closed
@@ -63,6 +70,11 @@ def openClawSync():
     setClaw(0)
     claw_lock.release()
 
+#opens claw asynchronously
+def openClaw():
+    thr = threading.Thread(target=openClawSync)
+    thr.start()
+    
 #wait for claw to stop moving, then return clampedness
 def clawIsClamped():
     global claw_lock
