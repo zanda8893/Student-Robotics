@@ -4,11 +4,6 @@ import position
 from position import Position
 import cube
 
-def pathHitsCube(start,end,cube,minDist):
-    p = Position(cube.x,cube.y)
-    d = position.perpDist(start,end,p)
-    return d < minDist
-
 def orientation(p1,p2,p3):
     #clockise,anticlockwise,straight = 1,2,0
     m = (p1.y-p2.y)/(p1.x-p2.x)
@@ -49,6 +44,9 @@ def cubeInZone(cube,zone):
     else:
         t = (5750 - cube.x) + cube.y
     return t < 2500
+
+def sortPts(pts,p,end):
+    return pts.sort(key=lambda pt:perpDist(p,end,pt))
 
 #closest the centre of the robot can get to the centre of
 #the cube to avoid contact
@@ -93,10 +91,30 @@ class Arena():
     
     def pathClear(start,end):
         for cube in self.cubeList:
-            if pathHitsCube(start,end,cube,robot_cube_distance):
+            if cube.hitsPath(start,end,robot_cube_distance):
                 return False
         if pathHitsPlatform(start,end,robot_platform_distance):
             return False
         return True
+
+    def getRoutePts(p,target=None,lim=5):
+        pts = []
+        platform_margin = 120
+        for cube in self.cubeList:
+            pts += cube.getRoutePts(p,robot_cube_distance)
+        poss = (-600-platform_margin,600+platform_margin):
+        for x in poss:
+            for y in poss:
+                pts.append(Position(x,y))
+        if not target is None:
+            pts = sortPts(pts,p,target)
+        i = 0
+        ret = []
+        for pt in pts:
+            if ret.length() >= lim:
+                break
+            if self.pathClear(p,pt):
+                ret.append(pt)
+        return ret
 
 A = Arena()

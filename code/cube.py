@@ -28,29 +28,36 @@ class Cube():
         #apply corrections to x and y due to size of cube
         self.x -= deg.cos(self.a) * 100
         self.y -= deg.sin(self.a) * 100
+
+        self.__updateP()
         
         self.color = m.info.marker_type
 
+    def __updateP(self):
+        self.p = Position(self.x,self.y)
+        
     #functions that define how the cube is printed
     def __str__(self):
         return "x: {0}  y: {1}  col: {2}".format(self.x,self.y,self.color)
 
     def __repr__(self):
         return self.__str__()
-    
 
-while True:
-    markers = R.see()
-    #use the arena markers to calculate robot's x,y,angle
-    x = position.findPosition(markers)
-    print("Position: {0}".format(conversions.toSimCoords(x[0])))
-    robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
-    for m in markers:
-        if m.info.marker_type == MARKER_ARENA:
-            print(m)
-            """
-        #make cube, print cube
-        c = Cube(m,robot_x,robot_y,robot_a)
-        p = conversions.toSimCoords(Position(c.x,c.y))
-        print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))"""
-    R.sleep(1)
+    def hitsPath(start,end,minDist):
+        p = Position(self.x,self.y)
+        d = position.perpDist(start,end,p)
+        return d < minDist
+
+    #tuple of potential route points
+    def getRoutePts(self,p,minDist):
+        cube_margin = 120
+        
+        d = p.dist(self.p)
+        r = cube_margin + minDist
+        da = deg.acos(r/d)
+        vec = self.p - p
+        a = deg.atan(vec.y/vec.x)
+        p1 = self.p + Position(r,0).rotate(a+da)
+        p2 = self.p + Position(r,0).rotate(a-da)
+        return [p1,p2]
+
