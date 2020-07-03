@@ -1,7 +1,6 @@
 
 
 spaces = [] #TODO: fill in with spaces
-<<<<<<< HEAD
 #number of spaces in previous list already used up
 num_used_spaces = 0
 
@@ -15,15 +14,5 @@ def transformLocationToZone(zone):
     pass
 
 #Gets location for cube depending on zone
-=======
-num_used_spaces = 0
-
-def locationForCubeZone0():
-    pass
-
-def transformLocationToZone(zone):
-    pass
-
->>>>>>> refs/remotes/origin/master
 def locationForCube():
     pass
