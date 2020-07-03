@@ -1,4 +1,4 @@
-import position
+from position import Position
 
 #convert single ordinate to competition value
 def toSimOrd(x):

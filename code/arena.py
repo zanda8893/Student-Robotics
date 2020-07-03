@@ -101,4 +101,4 @@ class Arena():
             return False
         return True
 
-    
+A = Arena()

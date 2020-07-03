@@ -23,6 +23,8 @@ class Cube():
         self.x = rx + deg.sin(ra - marker.rot_y) * marker.dist*1000
         self.y = ry + deg.cos(ra - marker.rot_y) * marker.dist*1000
 
+        p = conversions.toSimCoords(Position(self.x,self.y))
+        print("Before correction: {0}".format(p))
         #apply corrections to x and y due to size of cube
         self.x -= deg.cos(self.a) * 100
         self.y -= deg.sin(self.a) * 100
@@ -41,9 +43,14 @@ while True:
     markers = R.see()
     #use the arena markers to calculate robot's x,y,angle
     x = position.findPosition(markers)
+    print("Position: {0}".format(conversions.toSimCoords(x[0])))
     robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
     for m in markers:
+        if m.info.marker_type == MARKER_ARENA:
+            print(m)
+            """
         #make cube, print cube
         c = Cube(m,robot_x,robot_y,robot_a)
         p = conversions.toSimCoords(Position(c.x,c.y))
-        print("Code: {0}  {1}".format(m.info.code,p))
+        print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))"""
+    R.sleep(1)

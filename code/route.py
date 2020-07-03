@@ -1,56 +1,54 @@
 import position
 import arena
 
-def isStraightLine(start,end):
-    if
+"""
+Functions you're allowed to use:
+goToPoint(p) - asynchronously go to p (represented by Position class)
+goToPointSync(p) - same as goToPoint() but synchronous
+arrived() - True if goToPoint() has arrived yet
+wait() - wait for most recent route to finish
 
-def getIntermediatePoint(corner){
-    if corner==0:
-        return Position(1000,1000)
-    if corner==1:
-        return Position(1000,1000)
-    if corner==2:
-        return Position(1000,1000)
-    if corner==3:
-        return Position(1000,1000)
-}
+Note: calling goToPoint() or goToPointSync() while a route is
+already being followed will override the current route
+"""
 
-
-class Route():
-    def __init__(self):
-        self.points = []
-        pass
-    def setRoute(self,currentPos,targetPos,corner):
-        self.points.clear()
-        if targetStraightLine(currentPos,targetPos,corner):
-            self.points.append(targetPos)
-        else:
-            self.points.append(getIntermediatePoint(corner))
-            self.points.append(targetPos)
-    def followRoute(self,currentPos,orientation): #returns left and right motor speeds
-        p = self.points[0]
-        if (currentPos.x-p.x)**2 + (currentPos.y-p.y)**2 < 50**2:
-            if len(self.points) <= 1:
-                return 0,0
-            self.points.remove(0)
-            p = self.points[0]
-        a = math.atan((p.y-currentPos.y)/(p.x-currentPos.x))*180/math.pi
-        angleOff = orientation-a
-        while angleOff>360:
-            angleOff -= 360
-        while angleOff<0:
-            angleOff += 360
-
-        if angleOff > 20 and angleOff < 180:
-            return 20,-20
-        if angleOff < 20:
-            return 100,100-angleOff*2.5
-        if angleOff > 340:
-            return 100-angleOff*2.5,100
-        else:
-            return -20,20
+def tryRoute(pts):
+    if pts.length() < 2:
+        return False
+    for i in range(pts-1):
+        p1 = pts[i]
+        p2 = ptr[i + 2]
+        if not arena.A.pathClear(p1,p2):
+            return False
+    return True
 
 
+
+
+"""
+#final route
+points = []
+#route for testing
+__points = []
+def findRoute(start,end):
+    global points,__points
+    #__points stores all decided-on points
+    __points.append(start)
+    p1,p2 = start,end
+    if not arena.A.pathClear(p1,p2):
+        angle = deg.atan((p2.y-p1.y)/(p2.x-p1.x))
+        tp = arena.A.stopPoint(p1,p2)
+        mvAng = (90 + angle) % 360
+        for dev in range(0,500,10):
+            vec = Position(dev * deg.sin(angle),dev * deg.cos(angle))
+            tp1 = tp + vec
+            tp2 = tp - vec
+            if arena.A.pathClear(p1,tp1):
+                stat = findRoute(
+"""                    
+
+        
+        
 
 
 
@@ -67,4 +65,5 @@ class Route():
 
 
 
-//
+
+
