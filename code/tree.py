@@ -9,6 +9,7 @@ class Tree():
         p = self.nodes[parent]
         self.nodes.append([val,parent])
         p.append(self.nodes.length() - 1)
+        return self.nodes.length()-1
     
     def pathToNode(node):
         l = []
@@ -26,4 +27,16 @@ class Tree():
     def nodeParent(node):
         return self.nodes[node][1]
 
+    def leaves():
+        l = []
+        for i in range(self.nodes.length()):
+            n = self.nodes[i]
+            if n.length() == 2:
+                l.append(i)
+            else:
+                l.insert(self.leaves(i))
+        return l
+
+    def getData(node):
+        return self.nodes[node][0]
     

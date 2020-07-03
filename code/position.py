@@ -98,3 +98,34 @@ def findPosition(markers):
     p = Position(total[0].x / n,total[0].y / n)
     a = total[1] / (nx)
     return [p,a]
+
+#does markers and position
+def getPosition():
+    markers = robot_obj.R.see()
+    return findPosition(markers)
+
+#perpendicular distance of p from line (start,end)
+def perpDist(start,end,p):
+    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
+    a2 = deg.atan((p.y-start.y)/(p.x-start.x))
+    a = a1 - a2
+    d = p.dist(start)
+    opp = d * deg.sin(a)
+    return math.fabs(opp)
+
+#True if a line through p can be drawn perpendicular to (start,end)
+def perpBetween(start,end,p):
+    m = -1 / ((end.y-start.y)/(end.x-start.x))
+    c = p.y - p.x * m
+    sAbove = (start.y > m*start.x + c)
+    eAbove = (end.y > m*end.x + c)
+    return sAbove != eAbove
+
+#distance of p from start parallel to (start,end)
+def paraDist(start,end,p):
+    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
+    a2 = deg.atan((p.y-start.y)/(p.x-start.x))
+    a = a1 - a2
+    d = p.dist(start)
+    opp = d * deg.cos(a)
+    return opp

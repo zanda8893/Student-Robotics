@@ -1,15 +1,13 @@
 import math
 import robot
 import position
+from position import Position
 import cube
 
 def pathHitsCube(start,end,cube,minDist):
-    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
-    a2 = deg.atan((cube.y-start.y)/(cube.x-start.x))
-    a = a1 - a2
-    d = math.dist((cube.x,cube.y),(start.x,start.y))
-    opp = d * deg.sin(a)
-    return opp < minDist
+    p = Position(cube.x,cube.y)
+    d = position.perpDist(start,end,p)
+    return d < minDist
 
 def orientation(p1,p2,p3):
     #clockise,anticlockwise,straight = 1,2,0
