@@ -32,6 +32,7 @@ class Cube():
         self.__updateP()
         
         self.color = m.info.marker_type
+        self.code = m.info.code
 
     def __updateP(self):
         self.p = Position(self.x,self.y)
@@ -44,9 +45,10 @@ class Cube():
         return self.__str__()
 
     def hitsPath(start,end,minDist):
-        p = Position(self.x,self.y)
-        d = position.perpDist(start,end,p)
-        return d < minDist
+        d = position.perpDist(start,end,self.p)
+        ds = self.p.dist(start)
+        de = self.p.dist(end)
+        return min(d,ds,de) < minDist
 
     #tuple of potential route points
     def getRoutePts(self,p,minDist):

@@ -77,17 +77,21 @@ route_lock = threading.Lock()
 override_cond = threading.cond(route_lock)
 done_cond = threading.cond(route_lock)
 
+def getAngleDiff(a,ta):
+    diff = (ta - a)
+    if diff < -180:
+        diff += 360
+    if diff > 180:
+        diff -= 360
+    return diff
+
 def checkAngleSync(a,prev,nex):
     global drive_power,override_cond,route_tid
     max_angle_dev = 10
     rotate_speed = 20
     s_per_deg = 0.1
     ta = deg.atan((nex.y-prev.y)/(nex.x-prev.x))
-    diff = (ta - a)
-    if diff < -180:
-        diff += 360
-    if diff > 180:
-        diff -= 360
+    diff = getAngleDiff(a,ta)
     if math.fabs(diff) > max_angle_dev:
         if diff < 0:
             rotate_speed *= -1

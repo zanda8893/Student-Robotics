@@ -20,6 +20,16 @@ class Position:
         self.x = x * deg.cos(angle) - y * deg.sin(angle)
         self.y = x * deg.sin(angle) + y * deg.cos(angle)
         return self
+    def onPlatform(self):
+        if self.x < 5750/2-600:
+            return False
+        if self.x > 5750/2+600:
+            return False
+        if self.y < 5750/2-600:
+            return False
+        if self.y > 5750/2+600:
+            return False
+        return 
         
 import markers
 from conversions import *

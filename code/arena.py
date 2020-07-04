@@ -82,6 +82,12 @@ class Arena():
             return self.cubeList[i]
         return None
 
+    def getCubeById(cubeId):
+        for c in self.cubeList:
+            if c.code == cubeId:
+                return c
+        return None
+    
     def removeCube(self,code):
         for i in range(self.cubeList.length()):
             if self.cubeList[i].code == code:
@@ -97,6 +103,18 @@ class Arena():
             return False
         return True
 
+    def ptClear(p,minDist):
+        if p.x < minDist or p.x > 5750-minDist:
+            return False
+        if p.y < minDist or p.y > 5750-minDist:
+            return False
+        if p.onPlatform():
+            return False
+        for c in self.cubeList:
+            if c.p.dist < minDist:
+                return False
+        return True
+    
     def getRoutePts(p,target=None,lim=5):
         pts = []
         platform_margin = 120
