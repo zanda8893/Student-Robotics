@@ -15,4 +15,23 @@ def transformLocationToZone(zone):
 
 #Gets location for cube depending on zone
 def locationForCube():
-    pass
+        Zone = R.zone
+    x = 1.44
+    y = 1.44
+
+    if Zone == 0:
+        x = -x
+        y = -y
+
+    if Zone == 1:
+        x = x
+        y = -y
+
+    if Zone == 2:
+        x = x
+        y = y
+
+    if Zone == 3:
+        x = -x
+        y = y
+        
