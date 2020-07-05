@@ -54,7 +54,7 @@ robot_cube_distance = 300
 #closest the centre of the robot can get to the platform
 robot_plaform_distance = 200
 
-class Arena():
+class arena:
     def __init__(self):
         self.cubeList = []
 
