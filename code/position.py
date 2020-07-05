@@ -78,7 +78,6 @@ def findInfoMarker(marker):
     #angle of marker (measured CCW from positive x-axis)
     ma = markers.markerAngle(marker)
     d = marker.dist * 1000 #convert to mm
-    d = (d**2 - camera_2_marker_h**2)**0.5 #compensate for h diff
     #position of robot relative to marker
     p = Position(d*deg.cos(ang),d*deg.sin(ang))
     
