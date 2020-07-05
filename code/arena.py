@@ -1,5 +1,5 @@
 import math
-import robot
+from robot_obj import R
 import position
 from position import Position
 import cube
