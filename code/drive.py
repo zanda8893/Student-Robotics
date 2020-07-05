@@ -4,6 +4,7 @@ import threading
 
 """
 Functions you're allowed to use:
+init() - should be called at the start
 kill() - should be called when the entire code exits
 driveStraightSync(power,t) - drive straight at power ~power~ for t seconds
 driveStraight(power,t) - as above but asynchronously.
@@ -93,12 +94,12 @@ def driveStraight(power,t=-1):
     drive(power,power,t)
 
 def driveRotateSync(power,t):
-    drive(power,-power,t)
+    drive(-power,power,t)
     driveWait()
 
 #rotate anticlockwise asynchronously
 def driveRotate(power,t=-1):
-    drive(power,-power,t)
+    drive(-power,power,t)
 
 #true if all asynchronnous operations have finished
 def driveDone():
@@ -110,17 +111,6 @@ def driveDone():
     stop_cond.release()
     return ret
 
-wst = threading.Thread(target=watchStopTime)
-wst.start()
-
-driveStraightSync(1,1)
-driveStraight(2)
-driveStraight(3)
-driveStraight(4)
-time.sleep(1)
-driveStraight(5,2)
-time.sleep(1)
-driveStraight(6,2)
-driveWait()
-
-kill()
+def init():
+    wst = threading.Thread(target=watchStopTime)
+    wst.start()

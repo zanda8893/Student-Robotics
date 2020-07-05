@@ -22,7 +22,7 @@ claw_is_closed = False
 
 #set claw motor power
 def setClaw(x):
-    robot_obj.R.motors[1].m0.power = x
+    robot_obj.R.motors[1].m1.power = x
 
 #returns true when it doesn't timeout
 def stopClawOnPress(timeout=-1):
@@ -44,12 +44,14 @@ def stopClawOnPress(timeout=-1):
 def grabClawSync():
     global claw_lock,claw_is_closed
     claw_lock.acquire()
-    if not claw_is_closed:
+    if claw_is_closed:
         claw_lock.release()
         return
     claw_is_closed = True
-    robot_obj.R.motors[1].m0.power = 100
-    stopClawOnPress()
+    setClaw(-100)
+    print("Started at {0}".format(robot_obj.R.time()))    
+    stopClawOnPress(timeout=1)
+    print("Stopped at {0}".format(robot_obj.R.time()))
     claw_lock.release()
 
 #closes claw asynchronously
@@ -61,11 +63,11 @@ def grabClaw():
 def openClawSync():
     global claw_lock,claw_is_closed
     claw_lock.acquire()
-    if claw_is_closed:
+    if not claw_is_closed:
         claw_lock.release()
         return
     claw_is_closed = False
-    setClaw(-100)
+    setClaw(100)
     robot_obj.R.sleep(releasing_time)
     setClaw(0)
     claw_lock.release()

@@ -1,5 +1,6 @@
 from sr.robot import *
 import deg
+import math
 
 class Position:
     def __init__(self,x,y):
@@ -13,6 +14,8 @@ class Position:
         return "({0},{1})".format(self.x,self.y)
     def __repr__(self):
         return self.__str__()
+    def dist(self,p):
+        return math.dist((self.x,self.y),(p.x,p.y))
     def rotate(self,angle):
         #rotate point anticlockwise about origin
         x = self.x
@@ -29,7 +32,7 @@ class Position:
             return False
         if self.y > 5750/2+600:
             return False
-        return 
+        return True
         
 import markers
 from conversions import *
@@ -116,6 +119,10 @@ def getPosition():
 
 #perpendicular distance of p from line (start,end)
 def perpDist(start,end,p):
+    if end.x == start.x:
+        end.x += 0.000000001
+    if p.x == start.x:
+        p.x += 0.000000001
     a1 = deg.atan((end.y-start.y)/(end.x-start.x))
     a2 = deg.atan((p.y-start.y)/(p.x-start.x))
     a = a1 - a2
@@ -125,6 +132,8 @@ def perpDist(start,end,p):
 
 #True if a line through p can be drawn perpendicular to (start,end)
 def perpBetween(start,end,p):
+    if start.x == end.x:
+        end.x += 0.00000001
     m = -1 / ((end.y-start.y)/(end.x-start.x))
     c = p.y - p.x * m
     sAbove = (start.y > m*start.x + c)
@@ -133,6 +142,10 @@ def perpBetween(start,end,p):
 
 #distance of p from start parallel to (start,end)
 def paraDist(start,end,p):
+    if start.x == end.x:
+        end.x += 0.00000001
+    if p.x == start.x:
+        p.x += 0.00000001
     a1 = deg.atan((end.y-start.y)/(end.x-start.x))
     a2 = deg.atan((p.y-start.y)/(p.x-start.x))
     a = a1 - a2
