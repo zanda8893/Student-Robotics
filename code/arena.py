@@ -87,14 +87,14 @@ class Arena():
             if c.code == cubeId:
                 return c
         return None
-    
+
     def removeCube(self,code):
         for i in range(self.cubeList.length()):
             if self.cubeList[i].code == code:
                 self.cubeList.pop(i)
                 return True
         return False
-    
+
     def pathClear(start,end):
         for cube in self.cubeList:
             if cube.hitsPath(start,end,robot_cube_distance):
@@ -114,13 +114,13 @@ class Arena():
             if c.p.dist < minDist:
                 return False
         return True
-    
+
     def getRoutePts(p,target=None,lim=5):
         pts = []
         platform_margin = 120
         for cube in self.cubeList:
             pts += cube.getRoutePts(p,robot_cube_distance)
-        poss = (-600-platform_margin,600+platform_margin):
+        poss = (-600-platform_margin,600+platform_margin)
         for x in poss:
             for y in poss:
                 pts.append(Position(x,y))
