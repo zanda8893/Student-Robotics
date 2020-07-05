@@ -33,7 +33,7 @@ class Position:
         if self.y > 5750/2+600:
             return False
         return True
-        
+
 import markers
 from conversions import *
 
@@ -53,7 +53,7 @@ def wtf(rp,side):
         adj = polyDistance(rp.y)
     else:
         adj = polyDistance(rp.x)
-        
+
     if side==0:
         rp.x += adj
     elif side==1:
@@ -62,7 +62,7 @@ def wtf(rp,side):
         rp.x -= adj
     else:
         rp.y += adj
-        
+
     return rp
 """
 
@@ -80,7 +80,7 @@ def findInfoMarker(marker):
     d = marker.dist * 1000 #convert to mm
     #position of robot relative to marker
     p = Position(d*deg.cos(ang),d*deg.sin(ang))
-    
+
     #robot angle, robot position
     ra = (marker.orientation.rot_y + ma + 180) % 360
     rp = mp + p.rotate(ma)
@@ -90,12 +90,12 @@ def findInfoMarker(marker):
 
     #print("Pos: {0} Code: {1}".format(toSimCoords(rp),marker.info.code))
     return [rp,ra]
-    
+
 #gets an average over several markers
 #returns None if there were no arena markers
 def findPosition(markers):
     total = [Position(0,0),0] #position, angle
-    nx,ny = 0,0
+    n = 0
     for m in markers:
         if m.info.marker_type != MARKER_ARENA:
             continue
@@ -108,7 +108,7 @@ def findPosition(markers):
     if n==0:
         return None
     p = Position(total[0].x / n,total[0].y / n)
-    a = total[1] / (nx)
+    a = total[1] / (n)
     return [p,a]
 
 #does markers and position
