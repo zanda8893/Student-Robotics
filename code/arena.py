@@ -1,20 +1,20 @@
 import math
+import deg
+from sr.robot import *
 from robot_obj import R
 import position
 from position import Position
 import cube
+from cube import Cube
 
 def orientation(p1,p2,p3):
     #clockise,anticlockwise,straight = 1,2,0
-    if p1.x == p2.x:
-        p1.x += 0.000000001
-    m = (p1.y-p2.y)/(p1.x-p2.x)
-    c = p1.y - m*p1.x
-    ret = 1
-    if p3.y > m*p3.x + c:
-        ret = 2
-    if p3.y == m*p3.x + c:
+    val = (p2.y-p1.y)*(p3.x-p2.x) - (p2.x-p1.x)*(p3.y-p2.y)
+    ret = 2
+    if val==0:
         ret = 0
+    if val > 0:
+        ret = 1
     print(p1,p2,p3," Value:",ret)
     return ret
 
@@ -29,12 +29,13 @@ def linesIntersect(l1,l2):
 
 def pathHitsPlatform(start,end,minDist):
     a,b = 5750/2-600-minDist,5750/2+600+minDist
-    l = (Position(a,a),Position(b,b))
-    if linesIntersect((start,end),l):
-        return True
-    l = (Position(a,b),Position(b,a))
-    if linesIntersect((start,end),l):
-        return True
+    poss = [Position(a,a),Position(a,b),Position(b,b),Position(b,a)]
+    for i in range(4):
+        l = (poss[i],poss[(i+1) % 4])
+        print(l)
+        if linesIntersect((start,end),l):
+            print("A")
+            return True
     return False
 
 def cubeInZone(cube,zone):
@@ -50,7 +51,8 @@ def cubeInZone(cube,zone):
     return t < 2500
 
 def sortPts(pts,p,end):
-    return pts.sort(key=lambda pt:perpDist(p,end,pt))
+    pts.sort(key=lambda pt:position.perpDist(p,end,pt))
+    return pts
 
 #closest the centre of the robot can get to the centre of
 #the cube to avoid contact
@@ -62,19 +64,46 @@ class Arena():
     def __init__(self):
         self.cubeList = []
 
+    def __str__(self):
+        s = ""
+        for c in self.cubeList:
+            s += c.__str__() + "\n"
+        return s
+
+    def __repr__(self):
+        return self.__str__()
+    
     def addCube(self,newCube):
-        for cube in self.cubeList:
+        found = False
+        for i in range(len(self.cubeList)):
+            cube = self.cubeList[i]
             if cube.code == newCube.code:
                 found = True
+                self.cubeList[i] = newCube
+                
         if found != True:
             self.cubeList.append(newCube)
 
-    def getNearest(self,p,col):
+    def addMarkers(self,markers,rp=None,ra=None):
+        if rp is None or ra is None:
+            rp,ra = position.findPosition(markers)
+        rx = 500#rp.x
+        ry = 500#rp.y
+        for m in markers:
+            if m.info.marker_type == MARKER_ARENA:
+                continue
+            c = Cube(m,rx,ry,ra)
+            self.addCube(c)
+            
+    def getNearest(self,p,col,t=6):
+        #col=colour, t=time since seeing cube
         i = -1
         old = 100000
-        for ind in range(self.cubeList.length()):
+        for ind in range(len(self.cubeList)):
             cube = self.cubeList[ind]
             if cube.color != col:
+                continue
+            if R.time() - cube.ts > t:
                 continue
             if cubeInZone(cube,R.zone):
                 continue
@@ -86,20 +115,20 @@ class Arena():
             return self.cubeList[i]
         return None
 
-    def getCubeById(cubeId):
+    def getCubeById(self,cubeId):
         for c in self.cubeList:
             if c.code == cubeId:
                 return c
         return None
 
     def removeCube(self,code):
-        for i in range(self.cubeList.length()):
+        for i in range(len(self.cubeList)):
             if self.cubeList[i].code == code:
                 self.cubeList.pop(i)
                 return True
         return False
 
-    def pathClear(start,end):
+    def pathClear(self,start,end):
         for cube in self.cubeList:
             if cube.hitsPath(start,end,robot_cube_distance):
                 return False
@@ -107,7 +136,7 @@ class Arena():
             return False
         return True
 
-    def ptClear(p,minDist):
+    def ptClear(self,p,minDist):
         if p.x < minDist or p.x > 5750-minDist:
             return False
         if p.y < minDist or p.y > 5750-minDist:
@@ -119,7 +148,7 @@ class Arena():
                 return False
         return True
 
-    def getRoutePts(p,target=None,lim=5):
+    def getRoutePts(self,p,target=None,lim=5):
         pts = []
         platform_margin = 120
         for cube in self.cubeList:

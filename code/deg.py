@@ -12,3 +12,5 @@ def acos(x):
     return 180/math.pi*math.acos(x)
 def atan(x):
     return 180/math.pi*math.atan(x)
+def atan2(x):
+    return 180/math.pi*math.atan2(x)

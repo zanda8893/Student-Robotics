@@ -34,6 +34,7 @@ class Cube():
         
         self.color = marker.info.marker_type
         self.code = marker.info.code
+        self.ts = R.time()
 
     def __updateP(self):
         self.p = Position(self.x,self.y)
