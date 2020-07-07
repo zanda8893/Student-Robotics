@@ -26,13 +26,14 @@ class Cube():
         p = conversions.toSimCoords(Position(self.x,self.y))
         print("Before correction: {0}".format(p))
         #apply corrections to x and y due to size of cube
-        self.x -= deg.cos(self.a) * 100
-        self.y -= deg.sin(self.a) * 100
+        #NOTE: technically it should be 100, but this seems to be an error
+        self.x -= deg.sin(self.a) * 200
+        self.y -= deg.cos(self.a) * 200
 
         self.__updateP()
         
-        self.color = m.info.marker_type
-        self.code = m.info.code
+        self.color = marker.info.marker_type
+        self.code = marker.info.code
 
     def __updateP(self):
         self.p = Position(self.x,self.y)
@@ -44,7 +45,7 @@ class Cube():
     def __repr__(self):
         return self.__str__()
 
-    def hitsPath(start,end,minDist):
+    def hitsPath(self,start,end,minDist):
         d = position.perpDist(start,end,self.p)
         ds = self.p.dist(start)
         de = self.p.dist(end)
