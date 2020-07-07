@@ -54,13 +54,14 @@ class Cube():
     #tuple of potential route points
     def getRoutePts(self,p,minDist):
         cube_margin = 120
+        cube_path_margin = 100
         
         d = p.dist(self.p)
-        r = cube_margin + minDist
+        r = cube_path_margin + minDist
         da = deg.acos(r/d)
         vec = self.p - p
         a = deg.atan(vec.y/vec.x)
-        p1 = self.p + Position(r,0).rotate(a+da)
-        p2 = self.p + Position(r,0).rotate(a-da)
+        p1 = self.p + Position(cube_margin+minDist,0).rotate(a+da)
+        p2 = self.p + Position(cube_margin+minDist,0).rotate(a-da)
         return [p1,p2]
 

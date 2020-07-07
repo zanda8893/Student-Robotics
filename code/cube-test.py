@@ -4,14 +4,18 @@ from robot_obj import R
 import conversions
 import position
 
-p1 = Position(0,0)
-p2 = Position(0,0)
+
 def getP():
     global p1,p2
     p1 = p1 + Position(800,0)
     p2 = p2 + Position(0,800)
     return (p1,p2)
 def initP():
+    global p1,p2
+    p1.x=1
+    p1.y=0
+    p2.x=0
+    p2.y=0
     
 while True:
     markers = R.see()
@@ -25,12 +29,10 @@ while True:
      
         #make cube, print cube
         c = Cube(m,robot_x,robot_y,robot_a)
-        for i in range(10):
-            ps,pe = getP()
+        """for i in range(100):
+            ps,pe = Position(5750-57*i,0),Position(0,5750-57*i)
             print(ps,pe,c.hitsPath(ps,pe,100))
-        global p1,p2
-        p1 = Position(0,0)
-        p2 = Position(0,0)
+"""
         print(c.getRoutePts(Position(0,0),50))
         p = conversions.toSimCoords(Position(c.x,c.y))
         print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))

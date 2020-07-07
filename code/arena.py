@@ -6,13 +6,17 @@ import cube
 
 def orientation(p1,p2,p3):
     #clockise,anticlockwise,straight = 1,2,0
+    if p1.x == p2.x:
+        p1.x += 0.000000001
     m = (p1.y-p2.y)/(p1.x-p2.x)
     c = p1.y - m*p1.x
+    ret = 1
     if p3.y > m*p3.x + c:
-        return 2
+        ret = 2
     if p3.y == m*p3.x + c:
-        return 0
-    return 1
+        ret = 0
+    print(p1,p2,p3," Value:",ret)
+    return ret
 
 def linesIntersect(l1,l2):
     o1 = orientation(l1[0],l1[1],l2[0])
