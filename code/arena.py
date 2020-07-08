@@ -6,35 +6,66 @@ import position
 from position import Position
 import cube
 from cube import Cube
+import conversions
 
-def orientation(p1,p2,p3):
-    #clockise,anticlockwise,straight = 1,2,0
-    val = (p2.y-p1.y)*(p3.x-p2.x) - (p2.x-p1.x)*(p3.y-p2.y)
-    ret = 2
-    if val==0:
-        ret = 0
-    if val > 0:
-        ret = 1
-    print(p1,p2,p3," Value:",ret)
-    return ret
+"""
+Intersection code copied from geeksforgeeks.org
+"""
 
-def linesIntersect(l1,l2):
-    o1 = orientation(l1[0],l1[1],l2[0])
-    o2 = orientation(l1[0],l1[1],l2[1])
-    if o1 == 0 or o2 == 0:
+# Given three colinear points p, q, r, the function checks if  
+# point q lies on line segment 'pr'  
+def onSegment(p, q, r): 
+    if ( (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)) and 
+           (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))): 
         return True
-    if o1 == o2:
-        return False
-    return True
+    return False
+  
+def orientation(p, q, r): 
+    # 0 : Colinear points 
+    # 1 : Clockwise points 
+    # 2 : Counterclockwise 
+    val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y)) 
+    if (val > 0): 
+        return 1
+    elif (val < 0): 
+        return 2
+    else: 
+        return 0
+  
+# The main function that returns true if  
+# the line segment 'p1q1' and 'p2q2' intersect. 
+def linesIntersect(l1,l2):
+    p1,q1,p2,q2 = l1[0],l1[1],l2[0],l2[1]
+    # Find the 4 orientations required for  
+    # the general and special cases 
+    o1 = orientation(p1, q1, p2) 
+    o2 = orientation(p1, q1, q2) 
+    o3 = orientation(p2, q2, p1) 
+    o4 = orientation(p2, q2, q1) 
+  
+    # General case 
+    if ((o1 != o2) and (o3 != o4)): 
+        return True
+  
+    # Special Cases 
+    if ((o1 == 0) and onSegment(p1, p2, q1)): 
+        return True
+    if ((o2 == 0) and onSegment(p1, q2, q1)): 
+        return True
+    if ((o3 == 0) and onSegment(p2, p1, q2)): 
+        return True
+    if ((o4 == 0) and onSegment(p2, q1, q2)): 
+        return True
+    return False
 
 def pathHitsPlatform(start,end,minDist):
     a,b = 5750/2-600-minDist,5750/2+600+minDist
     poss = [Position(a,a),Position(a,b),Position(b,b),Position(b,a)]
     for i in range(4):
         l = (poss[i],poss[(i+1) % 4])
-        print(l)
+        #print(start,end,l)
         if linesIntersect((start,end),l):
-            print("A")
+            #print("A")
             return True
     return False
 
@@ -56,9 +87,9 @@ def sortPts(pts,p,end):
 
 #closest the centre of the robot can get to the centre of
 #the cube to avoid contact
-robot_cube_distance = 300
+robot_cube_distance = 250
 #closest the centre of the robot can get to the platform
-robot_plaform_distance = 200
+robot_platform_distance = 200
 
 class Arena():
     def __init__(self):
@@ -129,10 +160,13 @@ class Arena():
         return False
 
     def pathClear(self,start,end):
+        global robot_cube_distance,robot_platform_distance
         for cube in self.cubeList:
             if cube.hitsPath(start,end,robot_cube_distance):
+                print("Failing due to cube",cube)
                 return False
         if pathHitsPlatform(start,end,robot_platform_distance):
+            #print("Failing due to platform")
             return False
         return True
 
@@ -144,16 +178,19 @@ class Arena():
         if p.onPlatform():
             return False
         for c in self.cubeList:
-            if c.p.dist < minDist:
+            if c.p.dist(p) < minDist:
                 return False
         return True
 
-    def getRoutePts(self,p,target=None,lim=5):
+    def getRoutePts(self,p,target=None,lim=5,tlim=15):
+        #tlim is the time since seeing the cube
+        global robot_cube_distance
         pts = []
         platform_margin = 120
         for cube in self.cubeList:
-            pts += cube.getRoutePts(p,robot_cube_distance)
-        poss = (-600-platform_margin,600+platform_margin)
+            if R.time() - cube.ts <= tlim:
+                pts += cube.getRoutePts(p,robot_cube_distance)
+        poss = (5750/2-600-platform_margin,5750/2+600+platform_margin)
         for x in poss:
             for y in poss:
                 pts.append(Position(x,y))
@@ -162,10 +199,12 @@ class Arena():
         i = 0
         ret = []
         for pt in pts:
-            if ret.length() >= lim:
+            if len(ret) >= lim:
                 break
             if self.pathClear(p,pt):
                 ret.append(pt)
+            else:
+                print("Point {0} isn't clear".format(conversions.toSimCoords(pt)))
         return ret
 
 A = Arena()
