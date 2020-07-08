@@ -3,7 +3,7 @@ import cube
 from cube import Cube
 from sr.robot import *
 import position
-
+import conversions
 """
 class Cube():
     def __init__(self):
@@ -37,8 +37,9 @@ def test3():
     l1 = (Position(2800,0),Position(2900,2600)) #True
     l2 = (Position(5000,0),Position(0,5000)) #True
     l3 = (Position(4500,0),Position(0,4500)) #False
-    for l in (l1,l2,l3):
-        print(l,pathHitsPlatform(l[0],l[1],10))
+    l4 = (Position(2500,5),Position(5,2500)) 
+    for l in (l1,l2,l3,l4):
+        print(l,A.pathClear(l[0],l[1]))
 
 def test4():
     pts = [Position(5,30),Position(0,5)]
@@ -63,7 +64,23 @@ def test5():
     print("ID 45: ",c)
     A.removeCube(45)
     print(A)
-    
-    
 
-test5()
+def prList(l):
+    for i in l:
+        print(conversions.toSimCoords(i))
+
+def test6():
+    p = Position(500,500)
+    markers = R.see()
+    A.addMarkers(markers)
+    print(A)
+    pts = [Position(1950,1950),Position(1850,1850)]
+    for pt in pts:
+        print(conversions.toSimCoords(pt),A.ptClear(pt,80))
+    print("-----------")
+    prList(A.getRoutePts(p))
+    prList(A.getRoutePts(p,Position(1000,1000)))
+
+    
+test6()
+test3()

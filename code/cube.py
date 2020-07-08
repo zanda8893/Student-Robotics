@@ -50,12 +50,14 @@ class Cube():
         d = position.perpDist(start,end,self.p)
         ds = self.p.dist(start)
         de = self.p.dist(end)
-        return min(d,ds,de) < minDist
+        if position.perpBetween(start,end,self.p):
+            return d < minDist
+        return min(ds,de) < minDist
 
     #tuple of potential route points
     def getRoutePts(self,p,minDist):
-        cube_margin = 120
-        cube_path_margin = 100
+        cube_margin = 320
+        cube_path_margin = 301
         
         d = p.dist(self.p)
         r = cube_path_margin + minDist
