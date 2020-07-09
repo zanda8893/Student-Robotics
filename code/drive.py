@@ -4,7 +4,6 @@ import threading
 
 """
 Functions you're allowed to use:
-init() - should be called at the start
 kill() - should be called when the entire code exits
 driveStraightSync(power,t) - drive straight at power ~power~ for t seconds
 driveStraight(power,t) - as above but asynchronously.
@@ -25,6 +24,7 @@ stop_time = -1
 stop_lock = threading.Lock()
 stop_cond = threading.Condition(stop_lock)
 
+#stop_lock must be held to access killed
 killed = False
 
 #set drive - do not use from outside this file
@@ -44,7 +44,10 @@ def watchStopTime():
             stop_time = -1
             stop_cond.notify_all()
         else:
-            stop_cond.wait(timeout=(stop_time - time.time()))
+            if stop_time > 0:
+                stop_cond.wait(timeout=(stop_time - time.time()))
+            else:
+                stop_cond.wait()
     stop_cond.release()
 
 def kill():
@@ -114,3 +117,5 @@ def driveDone():
 def init():
     wst = threading.Thread(target=watchStopTime)
     wst.start()
+
+init()

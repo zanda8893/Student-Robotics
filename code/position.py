@@ -1,6 +1,7 @@
 from sr.robot import *
 import deg
 import math
+import robot_obj
 
 class Position:
     def __init__(self,x,y):
@@ -66,6 +67,7 @@ def wtf(rp,side):
     return rp
 """
 
+
 camera_distance = 5.2
 
 #returns a list containing the Position and angle of the robot
@@ -118,12 +120,8 @@ def getPosition():
 
 #perpendicular distance of p from line (start,end)
 def perpDist(start,end,p):
-    if end.x == start.x:
-        end.x += 0.000000001
-    if p.x == start.x:
-        p.x += 0.000000001
-    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
-    a2 = deg.atan((p.y-start.y)/(p.x-start.x))
+    a1 = deg.atan(safeDiv(end.y-start.y,end.x-start.x))
+    a2 = deg.atan(safeDiv(p.y-start.y,p.x-start.x))
     a = a1 - a2
     d = p.dist(start)
     opp = d * deg.sin(a)
@@ -131,9 +129,7 @@ def perpDist(start,end,p):
 
 #True if a line through p can be drawn perpendicular to (start,end)
 def perpBetween(start,end,p):
-    if start.x == end.x:
-        end.x += 0.00000001
-    m = -1 / ((end.y-start.y)/(end.x-start.x))
+    m = -1 / safeDiv(end.y-start.y,end.x-start.x)
     c = p.y - p.x * m
     sAbove = (start.y > m*start.x + c)
     eAbove = (end.y > m*end.x + c)
@@ -141,12 +137,8 @@ def perpBetween(start,end,p):
 
 #distance of p from start parallel to (start,end)
 def paraDist(start,end,p):
-    if start.x == end.x:
-        end.x += 0.00000001
-    if p.x == start.x:
-        p.x += 0.00000001
-    a1 = deg.atan((end.y-start.y)/(end.x-start.x))
-    a2 = deg.atan((p.y-start.y)/(p.x-start.x))
+    a1 = deg.atan(safeDiv(end.y-start.y,end.x-start.x))
+    a2 = deg.atan(safeDiv(p.y-start.y,p.x-start.x))
     a = a1 - a2
     d = p.dist(start)
     opp = d * deg.cos(a)

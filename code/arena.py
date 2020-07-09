@@ -89,7 +89,7 @@ def sortPts(pts,p,end):
 #the cube to avoid contact
 robot_cube_distance = 250
 #closest the centre of the robot can get to the platform
-robot_platform_distance = 200
+robot_platform_distance = 150
 
 class Arena():
     def __init__(self):
@@ -117,7 +117,10 @@ class Arena():
 
     def addMarkers(self,markers,rp=None,ra=None):
         if rp is None or ra is None:
-            rp,ra = position.findPosition(markers)
+            r = position.findPosition(markers)
+            if r is None:
+                return
+            rp = r[0]
         rx = 500#rp.x
         ry = 500#rp.y
         for m in markers:
@@ -163,7 +166,7 @@ class Arena():
         global robot_cube_distance,robot_platform_distance
         for cube in self.cubeList:
             if cube.hitsPath(start,end,robot_cube_distance):
-                print("Failing due to cube",cube)
+                #print("Failing due to cube",cube)
                 return False
         if pathHitsPlatform(start,end,robot_platform_distance):
             #print("Failing due to platform")
@@ -186,7 +189,7 @@ class Arena():
         #tlim is the time since seeing the cube
         global robot_cube_distance
         pts = []
-        platform_margin = 120
+        platform_margin = 160
         for cube in self.cubeList:
             if R.time() - cube.ts <= tlim:
                 pts += cube.getRoutePts(p,robot_cube_distance)
@@ -203,8 +206,8 @@ class Arena():
                 break
             if self.pathClear(p,pt):
                 ret.append(pt)
-            else:
-                print("Point {0} isn't clear".format(conversions.toSimCoords(pt)))
+            #else:
+                #print("Point {0} isn't clear".format(pt))
         return ret
 
 A = Arena()

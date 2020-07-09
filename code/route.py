@@ -1,7 +1,13 @@
 import position
 import arena
-import tree
+from arena import A
+from tree import Tree
 import threading
+from drive import *
+from robot_obj import R
+import deg
+import math
+from safediv import *
 """
 Functions you're allowed to use:
 goToPoint(p) - asynchronously go to p (represented by Position class)
@@ -18,7 +24,7 @@ already being followed will override the current route
 drive_power = 60
 
 def tryRoute(pts):
-    if pts.length() < 2:
+    if len(pts) < 2:
         return False
     for i in range(pts-1):
         p1 = pts[i]
@@ -36,31 +42,35 @@ def exploreBranch(tree,node,end):
 
     #potential points that the route might go through
     pts = arena.A.getRoutePts(tree.getData(node),target=end,lim=5)
+    #print("Route pts",pts)
     for pt in pts:
         tree.addNode(node,pt)
 
     return -1
 
 def findRoute(start,end):
-    tree = tree.Tree(start)
+    tree = Tree(start)
     max_depth = 10
     for i in range(max_depth):
-        leaves = tree.leaves
+        leaves = tree.leaves()
         for l in leaves:
             res = exploreBranch(tree,l,end)
             if res >= 0:
-                path = tree.pathToNode(res)
+                npath = tree.pathToNode(res)
+                path = [tree.getData(n) for n in npath]
                 return path
     return None
 
-def offRoute(p,prev,nex,route):
+def offRoute(p,prev,nex,route=None):
     max_dev = 80
-    if perpDist(prev,nex,p) <= max_dev:
+    if position.perpDist(prev,nex,p) <= max_dev:
         return False
-    for i in range(route.length()-1):
+    if route is None:
+        return True
+    for i in range(len(route)-1):
         p1 = route[i]
         p2 = route[i+1]
-        if perpBetween(p1,p2,p) and perpDist(p1,p2,p) <= max_dev:
+        if position.perpBetween(p1,p2,p) and position.perpDist(p1,p2,p) <= max_dev:
             return False
         if p1.dist(p) <= max_dev or p2.dist(p) <= max_dev:
             return False
@@ -68,15 +78,15 @@ def offRoute(p,prev,nex,route):
 
 def arrivedPt(p,prev,nex):
     arrived_tol = 40
-    if paraDist(prev,nex,p) > prev.dist(nex) - arrived_tol:
+    if position.paraDist(prev,nex,p) > prev.dist(nex) - arrived_tol:
         return True
     return False
 
 route_tid = 0
 route_done = 0 #0=not done,-1=error,1=done
 route_lock = threading.Lock()
-override_cond = threading.cond(route_lock)
-done_cond = threading.cond(route_lock)
+override_cond = threading.Condition(route_lock)
+done_cond = threading.Condition(route_lock)
 
 def getAngleDiff(a,ta):
     diff = (ta - a)
@@ -86,23 +96,59 @@ def getAngleDiff(a,ta):
         diff -= 360
     return diff
 
+def rotateFromDiff(diff):
+    global override_cond
+    diff = getAngleDiff(0,diff)
+    s_per_deg = 0.05
+    rotate_speed = 20
+    if diff < 0:
+        rotate_speed *= -1
+    t = math.fabs(diff) * s_per_deg
+    driveRotate(rotate_speed,t)
+    t0 = R.time()
+    while R.time() < t0 + t:
+        override_cond.wait(timeout=t*0.8)
+    
+
 def checkAngleSync(a,prev,nex):
     global drive_power,override_cond,route_tid
     max_angle_dev = 10
-    rotate_speed = 20
-    s_per_deg = 0.1
-    ta = deg.atan((nex.y-prev.y)/(nex.x-prev.x))
+    dev_low_wm = 6
+    ta = deg.atan(safeDiv(nex.y-prev.y,nex.x-prev.x))
     diff = getAngleDiff(a,ta)
     if math.fabs(diff) > max_angle_dev:
-        if diff < 0:
-            rotate_speed *= -1
-        t = math.fabs(diff) * s_per_deg
-        driveRotate(rotate_speed,t)
-        override_cond.wait(timout=t)
-        if route_tid == threading.get_ident():
-            driveStraight(drive_power)
-        
-def goToPointSync(p):
+        print("Wonky!")
+        while math.fabs(diff) > dev_low_wm:
+            rotateFromDiff(diff)
+            if route_tid != threading.get_ident():
+                return
+            m = R.see()
+            A.addMarkers(m)
+            cp = position.findPosition(m)
+            if cp is None:
+                continue
+            a = cp[1]
+            diff = getAngleDiff(a,ta)
+    driveStraight(drive_power)
+
+#0 for success, 1 for needs reroute
+def goToPointStraight(prev,nex):
+    while True:
+        m = R.see()
+        A.addMarkers(m)
+        cp = position.findPosition(m)
+        if cp is None:
+            continue
+        if arrivedPt(cp[0],prev,nex):
+            driveStraight(0)
+            return 0
+        if offRoute(cp[0],prev,nex):
+            driveStraight(0)
+            return 1
+        checkAngleSync(cp[1],prev,nex)
+   
+#returns route
+def beginRouting(p):
     global route_lock,route_tid,override_cond
     global route_done,done_cond
     route_lock.acquire()
@@ -111,29 +157,48 @@ def goToPointSync(p):
     route_tid = threading.get_ident()
     override_cond.notify_all()
     driveStraight(0)
-    start,ang = getPosition()
+
+    m = R.see()
+    A.addMarkers(m)
+    cp = position.findPosition(m)
+    if cp is None:
+        route_done = -1
+        done_cond.notify_all()
+        route_lock.release()
+        return None
+
+    start,ang = cp[0],cp[1]
+    curr = start
 
     route = findRoute(start,p)
-    if route is None or route.length() < 2:
+    if route is None or len(route) < 2:
         route_done = -1
         done_cond.notify_all()
         route_lock.release()
         return False
+    
+def goToPointSync(p):
+    
 
     i = 0
     prev = route[i]
     nex = route[i+1]
 
+    driveStraight(drive_power)
+
     while True:        
         if offRoute(curr,prev,nex,route):
+            print("Off route!")
             driveSraight(0)
             route = findRoute(start,p)
             i = 0
 
         if arrivedPt(curr,prev,nex):
+            print("Arrived!")
             i += 1
 
-        if route.length() <= i+1:
+        if len(route) <= i+1:
+            print("Finished!")
             break
 
         prev,nex = route[i],route[i+1]
@@ -144,6 +209,11 @@ def goToPointSync(p):
         if route_tid != threading.get_ident():
             route_lock.release()
             return False
+
+        m = R.see()
+        curr,ang = position.findPosition(m)
+        A.addMarkers(m)
+        
 
     route_done = 1
     done_cond.notify_all()

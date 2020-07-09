@@ -24,7 +24,7 @@ class Cube():
         self.y = ry + deg.cos(ra - marker.rot_y) * marker.dist*1000
 
         p = conversions.toSimCoords(Position(self.x,self.y))
-        print("Before correction: {0}".format(p))
+        #print("Before correction: {0}".format(p))
         #apply corrections to x and y due to size of cube
         #NOTE: technically it should be 100, but this seems to be an error
         self.x -= deg.sin(self.a) * 200
@@ -60,9 +60,11 @@ class Cube():
         cube_path_margin = 251
         
         d = p.dist(self.p)
-        r = cube_path_margin + minDist
-        da = deg.acos(r/d)
-        vec = self.p - p
+        r = minDist
+        da = 0
+        if r <= d:
+            da = deg.acos(r/d)
+        vec = p - self.p
         a = deg.atan(vec.y/vec.x)
         p1 = self.p + Position(cube_margin+minDist,0).rotate(a+da)
         p2 = self.p + Position(cube_margin+minDist,0).rotate(a-da)
