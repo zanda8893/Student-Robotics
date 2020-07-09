@@ -15,23 +15,48 @@ def transformLocationToZone(zone):
 
 #Gets location for cube depending on zone
 def locationForCube():
-        Zone = R.zone
-    x = 1.44
-    y = 1.44
+    Zone = R.zone
+    xc = 2.66
+    yc = 2.66
+    xb = 1.44
+    yb = 1.44
 
     if Zone == 0:
-        x = -x
-        y = -y
+        xc = -xc
+        yc = -yc
+        xb = -xb
+        yb = -yb
+
+        x= random.uniform(xb,xc)
+        y= random.uniform(yb,yc)
+        goToPoint(x,y)
 
     if Zone == 1:
-        x = x
-        y = -y
+        xc = xc
+        yc = -yc
+        xb = xb
+        yb = -yb
+
+        x= random.uniform(xb,xc)
+        y= random.uniform(yb,yc)
+        goToPoint(x,y)
 
     if Zone == 2:
-        x = x
-        y = y
+        xc = xc
+        yc = yc
+        xb = xb
+        yb = yb
+
+        x= random.uniform(xb,xc)
+        y= random.uniform(yb,yc)
+        goToPoint(x,y)
 
     if Zone == 3:
-        x = -x
-        y = y
-        
+        xc = -xc
+        yc = yc
+        xb = -xb
+        yb = yb
+
+        x= random.uniform(xb,xc)
+        y= random.uniform(yb,yc)
+        goToPoint(x,y)
