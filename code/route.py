@@ -1,6 +1,7 @@
 import position
 import arena
 import tree
+import threading
 """
 Functions you're allowed to use:
 goToPoint(p) - asynchronously go to p (represented by Position class)

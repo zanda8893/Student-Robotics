@@ -56,8 +56,8 @@ class Cube():
 
     #tuple of potential route points
     def getRoutePts(self,p,minDist):
-        cube_margin = 320
-        cube_path_margin = 301
+        cube_margin = 260
+        cube_path_margin = 251
         
         d = p.dist(self.p)
         r = cube_path_margin + minDist
