@@ -6,45 +6,42 @@
 import lift, claw, position #, route
 from robot_obj import R
 from arena import A
-
+from sr.robot import *
 
 while True:
     #Start
 
-    #Set claw and lift to known possitions
-    claw.openClaw()
-    lift.raiseLift()
+    #Set claw and lift to known positions
+    claw.openClawSync()
+    lift.raiseLiftSync()
 
     #Look for markers
     markers = R.see()
 
-    #~~Arena function for importing marker data into cube class~~Joe
-
-    #Find robot possition
-    Rp,Ra = position.findPosition(markers) #Rp = Robot coordinates, a = Robot angle
+    #Find robot position
+    #Rp = Robot coordinates, Ra = Robot angle
+    Rp,Ra = position.findPosition(markers) 
+    A.addMarkers(markers,Rp,Ra)
 
     #Find nearest cube
-    Cp, Cc = A.getNearest(p,"MARKER_TOKEN_GOLD") #Cp = Cube possition, Cc= Cube colour. Possible colours: MARKER_TOKEN_GOLD, MARKER_TOKEN_SILVER
+    #colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
+    cube = A.getNearest(p,MARKER_TOKEN_GOLD)
+
+    if cube.p.onPlatform():
+        lift.raiseLift()
+    else:
+        lift.lowerLift()
 
     #Go to nearest cube
-    route.goToPoint(Cp)
-    #Wait to arrive
-    if wait() ==1:
-        continue
-    else:
+    res = orienting.goToCube(cube.code)
+    if not res:
         #~~Code for routing error~~
+        pass
 
-    #~~oriente to cube angle~~Joe
-
-    """~~
-    if cubeHigh(Cp):
-        claw.grabClawSync()
-    else:
-        lift.lowerLiftSync()
-        claw.grabClawSync()
+    claw.grabClawSync()
     """#~~
 
-    #Hp = Home possition ~~find place for cube~~Luka
+    #Hp = Home position ~~find place for cube~~Luka
 
     #Go to Hp
     route.goToPoint(Cp)
