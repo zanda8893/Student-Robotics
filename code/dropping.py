@@ -1,4 +1,4 @@
-
+import conversions
 
 spaces = [] #TODO: fill in with spaces
 #number of spaces in previous list already used up
@@ -16,47 +16,39 @@ def transformLocationToZone(zone):
 #Gets location for cube depending on zone
 def locationForCube():
     Zone = R.zone
-    xc = 2.66
-    yc = 2.66
-    xb = 1.44
-    yb = 1.44
+    P = [[2.54,2.54],[1.84,2.54],[1.21,2.54],[2.54,1.93],[1.84,2],[2.54,1.2]]
 
+    #Col is the number of cubes collected
+    T = P[Col]
+
+    x = T[0]
+    y = T[1]
+
+    #xc,yc are the coords for the cube converted
     if Zone == 0:
-        xc = -xc
-        yc = -yc
-        xb = -xb
-        yb = -yb
+        x = -x
+        y = -y
 
-        x= random.uniform(xb,xc)
-        y= random.uniform(yb,yc)
-        goToPoint(x,y)
+        xc= fromSimOrd(x)
+        yc= fromSimOrd(y)
 
     if Zone == 1:
-        xc = xc
-        yc = -yc
-        xb = xb
-        yb = -yb
+        x = x
+        y = -y
 
-        x= random.uniform(xb,xc)
-        y= random.uniform(yb,yc)
-        goToPoint(x,y)
+        xc= fromSimOrd(x)
+        yc= fromSimOrd(y)
 
     if Zone == 2:
-        xc = xc
-        yc = yc
-        xb = xb
-        yb = yb
+        x = x
+        y = y
 
-        x= random.uniform(xb,xc)
-        y= random.uniform(yb,yc)
-        goToPoint(x,y)
+        xc= fromSimOrd(x)
+        yc= fromSimOrd(y)
 
     if Zone == 3:
-        xc = -xc
-        yc = yc
-        xb = -xb
-        yb = yb
+        x = -x
+        y = y
 
-        x= random.uniform(xb,xc)
-        y= random.uniform(yb,yc)
-        goToPoint(x,y)
+        xc= fromSimOrd(x)
+        yc= fromSimOrd(y)
