@@ -12,49 +12,49 @@ import conversions
 Intersection code copied from geeksforgeeks.org
 """
 
-# Given three colinear points p, q, r, the function checks if  
-# point q lies on line segment 'pr'  
-def onSegment(p, q, r): 
-    if ( (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)) and 
-           (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))): 
+# Given three colinear points p, q, r, the function checks if
+# point q lies on line segment 'pr'
+def onSegment(p, q, r):
+    if ( (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)) and
+           (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))):
         return True
     return False
-  
-def orientation(p, q, r): 
-    # 0 : Colinear points 
-    # 1 : Clockwise points 
-    # 2 : Counterclockwise 
-    val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y)) 
-    if (val > 0): 
+
+def orientation(p, q, r):
+    # 0 : Colinear points
+    # 1 : Clockwise points
+    # 2 : Counterclockwise
+    val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y))
+    if (val > 0):
         return 1
-    elif (val < 0): 
+    elif (val < 0):
         return 2
-    else: 
+    else:
         return 0
-  
-# The main function that returns true if  
-# the line segment 'p1q1' and 'p2q2' intersect. 
+
+# The main function that returns true if
+# the line segment 'p1q1' and 'p2q2' intersect.
 def linesIntersect(l1,l2):
     p1,q1,p2,q2 = l1[0],l1[1],l2[0],l2[1]
-    # Find the 4 orientations required for  
-    # the general and special cases 
-    o1 = orientation(p1, q1, p2) 
-    o2 = orientation(p1, q1, q2) 
-    o3 = orientation(p2, q2, p1) 
-    o4 = orientation(p2, q2, q1) 
-  
-    # General case 
-    if ((o1 != o2) and (o3 != o4)): 
+    # Find the 4 orientations required for
+    # the general and special cases
+    o1 = orientation(p1, q1, p2)
+    o2 = orientation(p1, q1, q2)
+    o3 = orientation(p2, q2, p1)
+    o4 = orientation(p2, q2, q1)
+
+    # General case
+    if ((o1 != o2) and (o3 != o4)):
         return True
-  
-    # Special Cases 
-    if ((o1 == 0) and onSegment(p1, p2, q1)): 
+
+    # Special Cases
+    if ((o1 == 0) and onSegment(p1, p2, q1)):
         return True
-    if ((o2 == 0) and onSegment(p1, q2, q1)): 
+    if ((o2 == 0) and onSegment(p1, q2, q1)):
         return True
-    if ((o3 == 0) and onSegment(p2, p1, q2)): 
+    if ((o3 == 0) and onSegment(p2, p1, q2)):
         return True
-    if ((o4 == 0) and onSegment(p2, q1, q2)): 
+    if ((o4 == 0) and onSegment(p2, q1, q2)):
         return True
     return False
 
@@ -103,7 +103,7 @@ class Arena():
 
     def __repr__(self):
         return self.__str__()
-    
+
     def addCube(self,newCube):
         found = False
         for i in range(len(self.cubeList)):
@@ -111,7 +111,7 @@ class Arena():
             if cube.code == newCube.code:
                 found = True
                 self.cubeList[i] = newCube
-                
+
         if found != True:
             self.cubeList.append(newCube)
 
@@ -128,7 +128,7 @@ class Arena():
                 continue
             c = Cube(m,rx,ry,ra)
             self.addCube(c)
-            
+
     def getNearest(self,p,col,t=6):
         #col=colour, t=time since seeing cube
         i = -1
@@ -141,7 +141,7 @@ class Arena():
                 continue
             if cubeInZone(cube,R.zone):
                 continue
-            newD = math.dist((cube.x,cube.y),(p.x,p.y))
+            newD = math.sqrt((cube.x - p.x)**2 + (cube.y - p.y)**2)
             if newD < old:
                 old = newD
                 i = ind
