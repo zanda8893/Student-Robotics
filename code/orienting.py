@@ -2,6 +2,9 @@ import deg
 import route
 import position
 import arena
+import math
+import ultrasound
+import drive
 
 position_distance = 150
 preposition_distance = 150 #distance to travel from pre to pos
@@ -9,6 +12,7 @@ collision_distance = 280
 platform_stop_dist = 10
 
 def possiblePrePositions(cube):
+    global position_distance,preposition_distance,collision_distance
     ret = []
     d = position_distance + preposition_distance
     for ang in (0,90,180,270):
@@ -46,7 +50,9 @@ def getPrePosition(cube,p):
     else:
         return getPrePositionOther(cube,p)
 
-sec_per_deg = 0.1
+"""
+Deprecated: use drive.driveRotateToAngle() instead
+sec_per_deg = 0.013
 def setOrientation(a,tol=10):
     global sec_per_deg
     rotate_power = 30
@@ -59,8 +65,10 @@ def setOrientation(a,tol=10):
         if diff < 0:
             rotate_power *= -1
         drive.driveRotateSync(rotate_power,t)
+"""
 
-drive_power = 50
+"""
+drive_power = 40
 def driveDist(d,timeout=10):
     global drive_power
     p0,a = positions.getPosition()
@@ -74,7 +82,7 @@ def driveDist(d,timeout=10):
         if robot_obj.R.time() - t0 > timeout:
             drive.driveStraight(0)
             return False
-        
+
 def goToCube(cubeId,currPos):
     global preposition_distance
     cube = arena.A.getCubeById(cubeId)
@@ -89,3 +97,33 @@ def goToCube(cubeId,currPos):
         return False
     setOrientation(pre_a)
     return driveStraight(preposition_distance)
+"""
+
+def approachCube():
+    min_dist = 100
+    while True:
+        leftd = ultrasound.getDistance(0)
+        rightd = ultrasound.getDistance(1)
+        print(f"Left {leftd} Right {rightd}")
+
+        m = None
+        if leftd is None and rightd is None:
+            print("Straight")
+            drive.driveStraight(20)
+        elif leftd is None:
+            print("Rotating CW")
+            drive.drive(20,5,-1)
+            m = rightd
+        elif rightd is None:
+            print("Rotating CCW")
+            drive.drive(5,20,-1)
+            m = leftd
+        else:
+            print("Straight slowly")
+            drive.driveStraight(15)
+            m = leftd
+
+        if not m is None and m < min_dist:
+            print("Stopping")
+            drive.driveStraight(0)
+            return

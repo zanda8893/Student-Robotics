@@ -105,6 +105,10 @@ def driveRotateSync(power,t):
 def driveRotate(power,t=-1):
     drive(-power,power,t)
 
+def driveSync(left,right,t):
+    drive(left,right)
+    driveWait()
+    
 def rotateFromDiff(diff):
     #diff = getAngleDiff(0,diff)
     s_per_deg = 0.013

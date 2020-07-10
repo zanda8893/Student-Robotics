@@ -111,27 +111,23 @@ def checkAngleSync(a,prev,nex):
     ta = position.anglePts(prev,nex)
     diff = position.getAngleDiff(ta,a)
     if math.fabs(diff) > max_angle_dev:
-        print("D")
         driveRotateToAngle(ta)
     driveStraight(drive_power)
 #0 for success
 def goToPointStraight(prev,nex):
-    print("Going to point",nex)
+    #print("Going to point",nex)
     lastPt = prev
     while True:
         m = R.see()
         #A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
-            print("A")
             continue
-        print("Current position {0}".format(cp))
+        #print("Current position {0}".format(cp))
         if arrivedPt(cp[0],prev,nex):
-            print("B")
             driveStraight(0)
             return 0
         if cp[0].dist(nex) > 100:
-            print("C")
             lastPt = cp[0]
         checkAngleSync(cp[1],lastPt,nex)
 
