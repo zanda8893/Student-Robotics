@@ -165,7 +165,7 @@ class Arena():
             if cubeInZone(cube,R.zone) != inZone:
                 continue
             l.append(self.cubeList[ind])
-        l.sort(key=lambda c: c.dist(p))
+        l.sort(key=lambda c: c.p.dist(p))
         if len(l) <= n:
             return None
         return l[n]
