@@ -29,7 +29,7 @@ killed = False
 
 #set drive - do not use from outside this file
 def setDrive(l,r):
-    #print("Setting drive to {0},{1} at {2}".format(l,r,time.time()))
+    #print("Setting drive to {0},{1} at {2}".format(l,r,robot_obj.R.time()))
     robot_obj.R.motors[0].m0.power = l
     robot_obj.R.motors[0].m1.power = r
 
@@ -37,7 +37,7 @@ def watchStopTime():
     global stop_cond,stop_time,drive_lock,killed
     stop_cond.acquire()
     while not killed:
-        if stop_time > 0 and time.time() >= stop_time:
+        if stop_time > 0 and robot_obj.R.time() >= stop_time:
             drive_lock.acquire()
             setDrive(0,0)
             drive_lock.release()
@@ -45,7 +45,7 @@ def watchStopTime():
             stop_cond.notify_all()
         else:
             if stop_time > 0:
-                stop_cond.wait(timeout=(stop_time - time.time()))
+                stop_cond.wait(timeout=(stop_time - robot_obj.R.time()))
             else:
                 stop_cond.wait()
     stop_cond.release()
@@ -77,7 +77,7 @@ def drive(left,right,t):
     drive_lock.release()
 
     if t >= 0:
-        stop_time = time.time() + t
+        stop_time = robot_obj.R.time() + t
         stop_cond.notify_all()
     else:
         stop_time = -1
