@@ -1,54 +1,34 @@
-import conversions
+from conversions import *
+from robot_obj import R
 
-spaces = [] #TODO: fill in with spaces
 #number of spaces in previous list already used up
 num_used_spaces = 0
 
-#Find a suitable location to place the next cube for zone 0
-def locationForCubeZone0():
-    pass
-
-#Translate the position depending on the zone
-#e.g. (300,200) -> (300,5750-200) for zone 1
-def transformLocationToZone(zone):
-    pass
-
 #Gets location for cube depending on zone
 def locationForCube():
-    Zone = R.zone
-    P = [[2.54,2.54],[1.84,2.54],[1.21,2.54],[2.54,1.93],[1.84,2],[2.54,1.2]]
+    global num_used_spaces
+    
+    zone = R.zone
+    pts = [Position(2.54,2.54),Position(1.84,2.54),
+         Position(1.21,2.54),Position(2.54,1.93),
+         Position(1.84,2),Position(2.54,1.2)]
 
     #Col is the number of cubes collected
-    T = P[Col]
+    p = pts[num_used_spaces]
 
-    x = T[0]
-    y = T[1]
+    #pc is the coords for the cube converted
+    if zone == 0:
+        pc = fromSimCoords(Position(-p.x,-p.y))
+    if zone == 1:
+        pc = fromSimCoords(Position(p.x,-p.y))
+    if zone == 2:
+        pc = fromSimCoords(Position(p.x,p.y))
+    if zone == 3:
+        pc = fromSimCoords(Position(-p.x,p.y))
 
-    #xc,yc are the coords for the cube converted
-    if Zone == 0:
-        x = -x
-        y = -y
+    return pc
 
-        xc= fromSimOrd(x)
-        yc= fromSimOrd(y)
-
-    if Zone == 1:
-        x = x
-        y = -y
-
-        xc= fromSimOrd(x)
-        yc= fromSimOrd(y)
-
-    if Zone == 2:
-        x = x
-        y = y
-
-        xc= fromSimOrd(x)
-        yc= fromSimOrd(y)
-
-    if Zone == 3:
-        x = -x
-        y = y
-
-        xc= fromSimOrd(x)
-        yc= fromSimOrd(y)
+#Call this once a cube has been placed in the most recent location
+def placeCube():
+    global num_used_spaces
+    num_used_spaces += 1
