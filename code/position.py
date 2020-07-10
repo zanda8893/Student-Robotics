@@ -167,7 +167,7 @@ def anglePts(start,end):
 
 #gets difference between angles between -180 and 180
 def getAngleDiff(a,ta):
-    diff = (ta - a)
+    diff = (a - ta)
     while diff < -180:
         diff += 360
     while diff > 180:
