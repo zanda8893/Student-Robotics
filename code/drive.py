@@ -45,7 +45,7 @@ def watchStopTime():
             stop_cond.notify_all()
         else:
             if stop_time > 0:
-                stop_cond.wait(timeout=(stop_time - robot_obj.R.time()))
+                stop_cond.wait(timeout=0.8*(stop_time - robot_obj.R.time()))
             else:
                 stop_cond.wait()
     stop_cond.release()

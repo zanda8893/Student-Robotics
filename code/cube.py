@@ -34,9 +34,13 @@ class Cube():
         #and the positive x-axis
 
         d = marker.dist * 1000
+        print(f"Marker distance {d}")
         self.a = (ra - marker.orientation.rot_y + 180) % 360
-        self.x = rx + deg.sin(ra - marker.rot_y) * d
-        self.y = ry + deg.cos(ra - marker.rot_y) * d
+        print(f"Marker angle {self.a}")
+        adiff = ra - marker.rot_y
+        print(f"Adiff {adiff}")
+        self.x = rx + deg.sin(adiff) * d
+        self.y = ry + deg.cos(adiff) * d
 
         p = conversions.toSimCoords(Position(self.x,self.y))
         print("Before correction: {0} {1}".format(p,self.a))

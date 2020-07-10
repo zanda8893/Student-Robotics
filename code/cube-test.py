@@ -22,17 +22,14 @@ while True:
     #use the arena markers to calculate robot's x,y,angle
     x = position.findPosition(markers)
     print("Position: {0}".format(conversions.toSimCoords(x[0])))
-    robot_x,robot_y,robot_a = 500,500,x[1]
+    robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
     for m in markers:
         if m.info.marker_type == MARKER_ARENA:
             continue
      
         #make cube, print cube
         c = Cube(m,robot_x,robot_y,robot_a)
-        """for i in range(100):
-            ps,pe = Position(5750-57*i,0),Position(0,5750-57*i)
-            print(ps,pe,c.hitsPath(ps,pe,100))
-"""
+
         print(c.getRoutePts(Position(0,0),50))
         p = conversions.toSimCoords(Position(c.x,c.y))
         print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))
