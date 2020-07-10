@@ -48,10 +48,6 @@ def exploreBranch(tree,node,end):
 
     return -1
 
-def translateToZone(p,zone):
-    for i in range(zone):
-        p = Position(p.y,5750-p.x) #rotate clockwise
-    return p
 
 initial_tree = Tree(Position(1425,1425))
 level_1_pts = [Position(1155,3225),Position(1585,2345),
@@ -70,7 +66,7 @@ def findRoute(start,end):
 
 def initTree():
     global initial_tree
-    c = lambda p:translateToZone(p,R.zone)
+    c = lambda p:position.translateToZone(p,R.zone)
     n1 = initial_tree.addNode(0,c(Position(1155,3225)))
     n2 = initial_tree.addNode(n1,c(Position(1935,3295)))
     n1 = initial_tree.addNode(0,c(Position(1585,2345)))
@@ -108,17 +104,6 @@ route_lock = threading.Lock()
 override_cond = threading.Condition(route_lock)
 done_cond = threading.Condition(route_lock)
 
-
-
-def rotateFromDiff(diff):
-    global override_cond
-    diff = getAngleDiff(0,diff)
-    s_per_deg = 0.022
-    rotate_speed = 20
-    if diff < 0:
-        rotate_speed *= -1
-    t = math.fabs(diff) * s_per_deg
-    driveRotate(rotate_speed,t)
 
 def checkAngleSync(a,prev,nex):
     global drive_power
