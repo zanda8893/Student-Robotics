@@ -3,65 +3,39 @@
 #~~ = Yet to be implimented/written
 
 #Imports
-import lift, claw, position, route_new
-from robot_obj import R
+import lift, claw, position, route_new, route, robot_obj
 from arena import A
-from sr.robot import *
 
 
 
-while True:
-    #Start
+#Start
 
-    #Set claw and lift to known positions
-    claw.openClawSync()
-    lift.raiseLiftSync()
+#Set claw and lift to known positions
 
-    #Look for markers
-    markers = R.see()
-    print("See")
-    #Find robot position
-    #Rp = Robot coordinates, Ra = Robot angle
-    print("pos")
-    Rp,Ra = position.findPosition(markers)
-    #print("arena")
-    #A.addMarkers(markers,Rp,Ra)
 
-    #Find nearest cube
-    #colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
-    #print("get near")
-    #cube = A.getNearest(Rp,MARKER_TOKEN_GOLD)
+#Look for markers
+markers = robot_obj.R.see()
+print("See")
+#Find robot position
+#Rp = Robot coordinates, Ra = Robot angle
+print("pos")
+start_Rp,start_Ra = position.findPosition(markers)
+#print("arena")
+#A.addMarkers(markers,Rp,Ra)
 
-    #print(cube)
-    """
-    if cube.p.onPlatform():
-        lift.raiseLift()
-    else:
-        lift.lowerLift()
-    """
-    #print(cube.code)
-    #Go to nearest cube
-    #~~res = orienting.goToCube(cube.code)
-    route_new.goToCube("test")
+#Find nearest cube
+#colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
+#print("get near")
+#cube = A.getNearest(Rp,MARKER_TOKEN_GOLD)
 
-    """
-    if not res:
-        #~~Code for routing error~~
-        pass
-    """
+route_new.goToCube("test")
+claw.grabClaw()
+robot_obj.R.sleep(1)
+Rp = position.findPosition(robot_obj.R.see())
+if Rp is None:
+    print("Pos Failed")
+else:
+    route.goToPointStraight(Rp[0],start_Rp)
 
-    claw.grabClawSync()
-
-    #Hp = Home position ~~find place for cube~~Luka
-
-    #Go to Hp
-    route.goToPoint(Cp)
-    #Wait to arrive
-    if wait() ==1:
-        continue
-    #else:
-        #~~Code for routing error~~
-
-    claw.openClaw()
-
-    #End
+print("Done")
+#End
