@@ -55,10 +55,8 @@ class Cube():
         return min(ds,de) < minDist
 
     #tuple of potential route points
+    #minDist is the minimum distance between cube and robot centres
     def getRoutePts(self,p,minDist):
-        cube_margin = 260
-        cube_path_margin = 251
-        
         d = p.dist(self.p)
         r = minDist
         da = 0
@@ -66,7 +64,7 @@ class Cube():
             da = deg.acos(r/d)
         vec = p - self.p
         a = deg.atan(vec.y/vec.x)
-        p1 = self.p + Position(cube_margin+minDist,0).rotate(a+da)
-        p2 = self.p + Position(cube_margin+minDist,0).rotate(a-da)
+        p1 = self.p + Position(minDist+10,0).rotate(a+da)
+        p2 = self.p + Position(minDist+10,0).rotate(a-da)
         return [p1,p2]
 

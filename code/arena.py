@@ -6,7 +6,7 @@ import position
 from position import Position
 import cube
 from cube import Cube
-import conversions
+from conversions import *
 
 """
 Intersection code copied from geeksforgeeks.org
@@ -87,9 +87,9 @@ def sortPts(pts,p,end):
 
 #closest the centre of the robot can get to the centre of
 #the cube to avoid contact
-robot_cube_distance = 250
+robot_cube_distance = 450
 #closest the centre of the robot can get to the platform
-robot_platform_distance = 150
+robot_platform_distance = 300
 
 class Arena():
     def __init__(self):
@@ -111,8 +111,10 @@ class Arena():
             if cube.code == newCube.code:
                 found = True
                 self.cubeList[i] = newCube
+                
 
         if found != True:
+            print("Cube {0} detected at {1}!".format(newCube.code,toSimCoords(newCube.p)))
             self.cubeList.append(newCube)
 
     def addMarkers(self,markers,rp=None,ra=None):
@@ -121,6 +123,7 @@ class Arena():
             if r is None:
                 return
             rp = r[0]
+            ra = r[1]
         rx = rp.x
         ry = rp.y
         for m in markers:
@@ -192,7 +195,7 @@ class Arena():
         platform_margin = 160
         for cube in self.cubeList:
             if R.time() - cube.ts <= tlim:
-                pts += cube.getRoutePts(p,robot_cube_distance)
+                pts += cube.getRoutePts(p,robot_cube_distance+50)
         poss = (5750/2-600-platform_margin,5750/2+600+platform_margin)
         for x in poss:
             for y in poss:

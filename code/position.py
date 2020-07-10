@@ -136,7 +136,7 @@ def perpDist(start,end,p):
 
 #True if a line through p can be drawn perpendicular to (start,end)
 def perpBetween(start,end,p):
-    m = -1 / safeDiv(end.y-start.y,end.x-start.x)
+    m = -safeDiv(end.x-start.x,end.y-start.y)
     c = p.y - p.x * m
     sAbove = (start.y > m*start.x + c)
     eAbove = (end.y > m*end.x + c)

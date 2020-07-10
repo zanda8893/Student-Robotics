@@ -28,7 +28,7 @@ def tryRoute(pts):
         return False
     for i in range(pts-1):
         p1 = pts[i]
-        p2 = ptr[i + 2]
+        p2 = pts[i + 1]
         if not arena.A.pathClear(p1,p2):
             return False
     return True
@@ -41,8 +41,7 @@ def exploreBranch(tree,node,end):
         return n
 
     #potential points that the route might go through
-    pts = arena.A.getRoutePts(tree.getData(node),target=end,lim=5)
-    #print("Route pts",pts)
+    pts = arena.A.getRoutePts(tree.getData(node),target=end,lim=10)
     for pt in pts:
         tree.addNode(node,pt)
 
@@ -58,6 +57,7 @@ def findRoute(start,end):
             if res >= 0:
                 npath = tree.pathToNode(res)
                 path = [tree.getData(n) for n in npath]
+                print("Path:",path)
                 return path
     return None
 
@@ -77,7 +77,7 @@ def offRoute(p,prev,nex,route=None):
     return True
 
 def arrivedPt(p,prev,nex):
-    arrived_tol = 40
+    arrived_tol = 10
     if position.paraDist(prev,nex,p) > prev.dist(nex) - arrived_tol:
         return True
     return False
@@ -99,7 +99,7 @@ def getAngleDiff(a,ta):
 def rotateFromDiff(diff):
     global override_cond
     diff = getAngleDiff(0,diff)
-    s_per_deg = 0.05
+    s_per_deg = 0.01
     rotate_speed = 20
     if diff < 0:
         rotate_speed *= -1
@@ -113,7 +113,7 @@ def rotateFromDiff(diff):
 def checkAngleSync(a,prev,nex):
     global drive_power,override_cond,route_tid
     max_angle_dev = 10
-    dev_low_wm = 6
+    dev_low_wm = 1
     ta = deg.atan(safeDiv(nex.y-prev.y,nex.x-prev.x))
     diff = getAngleDiff(a,ta)
     if math.fabs(diff) > max_angle_dev:
@@ -126,26 +126,38 @@ def checkAngleSync(a,prev,nex):
             A.addMarkers(m)
             cp = position.findPosition(m)
             if cp is None:
+                diff = 0
                 continue
             a = cp[1]
             diff = getAngleDiff(a,ta)
+        print("Fixed wonk!")
     driveStraight(drive_power)
 
-#0 for success, 1 for needs reroute
+#0 for success, 1 for needs reroute, 2 for overriden
 def goToPointStraight(prev,nex):
+    global override_cond
+    print("Going to point",nex)
     while True:
         m = R.see()
         A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
             continue
+        print("Current position {0}".format(cp))
         if arrivedPt(cp[0],prev,nex):
             driveStraight(0)
-            return 0
-        if offRoute(cp[0],prev,nex):
-            driveStraight(0)
-            return 1
+            return 0,cp[0],cp[1]
+        if not A.pathClear(cp[0],nex):
+            print("Uh oh, path not clear!")
+            driveStraightSync(-50,1)
+            return 1,cp[0],cp[1]
+        #if offRoute(cp[0],prev,nex):
+        #    driveStraight(0)
+        #    return 1,cp[0],cp[1]
         checkAngleSync(cp[1],prev,nex)
+        override_cond.wait(timeout=0.1)
+        if route_tid != threading.get_ident():
+            return 2,cp[0],cp[1]
    
 #returns route
 def beginRouting(p):
@@ -179,50 +191,66 @@ def beginRouting(p):
         route_lock.release()
         return None
 
-    return route
-    
-def goToPointSync(p):
-    
+    return route,curr,ang
 
+def rotateUntilPos():
+    curr = None
+    while curr is None:
+        m = R.see()
+        A.addMarkers(m)
+        cp = position.findPosition(m)
+        if cp is None:
+            driveRotate(20)
+            continue
+        curr,ang = cp[0],cp[1]
+    driveStraight(0)
+    return curr,ang
+
+def goToPointSync(p):
+    route,curr,ang = beginRouting(p)
+    if route is None:
+        return False
+    
     i = 0
     prev = route[i]
     nex = route[i+1]
 
-    driveStraight(drive_power)
+    ret = False
+    #driveStraight(drive_power)
+    checkAngleSync(ang,prev,nex)
 
-    while True:        
-        if offRoute(curr,prev,nex,route):
-            print("Off route!")
-            driveSraight(0)
-            route = findRoute(start,p)
+    while True:
+        res,curr,ang = goToPointStraight(prev,nex)
+        if res == 1:
+            curr,ang = rotateUntilPos()
+            print("Rerouting!")
+            route = findRoute(curr,p)
+            print("Route:",route)
+            if route is None or len(route) < 2:
+                route_done = -1
+                done_cond.notify_all()
+                ret = False
+                break
+            print("Found new route!")
             i = 0
-
-        if arrivedPt(curr,prev,nex):
-            print("Arrived!")
+        elif res == 2:
+            print("Interrupted!")
+            ret = False
+            break
+        else:
+            print("Arrived at intermediate pt!")
             i += 1
-
+        
         if len(route) <= i+1:
             print("Finished!")
+            route_done = 1
+            ret = True
+            done_cond.notify_all()
             break
 
         prev,nex = route[i],route[i+1]
-        checkAngleSync(ang,prev,nex)
-
-        override_cond.wait(timeout=0.1) #opportunity for override
-        
-        if route_tid != threading.get_ident():
-            route_lock.release()
-            return False
-
-        m = R.see()
-        curr,ang = position.findPosition(m)
-        A.addMarkers(m)
-        
-
-    route_done = 1
-    done_cond.notify_all()
     route_lock.release()
-    return True
+    return ret
 
 def goToPoint(p):
     thr = threading.Thread(target=goToPointSync,args=(p))
