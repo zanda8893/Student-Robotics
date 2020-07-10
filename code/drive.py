@@ -122,6 +122,25 @@ def rotateFromDiff(diff):
     t = math.fabs(diff) * s_per_deg
     driveRotateSync(rotate_speed,t)
     
+def driveRotateToAngle(ang):
+    max_dev = 1
+    m = robot_obj.R.see()
+    cp = position.findPosition(m)
+    if cp is None:
+        return False
+    diff = position.angleDiff(ang,cp[1])
+    while math.fabs(diff) > max_dev:
+        rotateFromDiff(diff)
+        m = robot_obj.R.see()
+        cp = position.findPosition(m)
+        if cp is None or prev_p is None:
+            diff = 0
+            continue
+        a = cp[1]
+        prev_a = prev_p[1]
+        diff = getAngleDiff(ang,a)
+    driveStraight(0)
+
 def driveRotateAngle(ang):
     max_dev = 1
     m = robot_obj.R.see()
@@ -139,6 +158,7 @@ def driveRotateAngle(ang):
         diff = ang - (a - prev_a)
         diff = getAngleDiff(diff,0)
     driveStraight(0)
+    
     
 #true if all asynchronnous operations have finished
 def driveDone():
