@@ -107,7 +107,7 @@ def driveRotate(power,t=-1):
 
 def rotateFromDiff(diff):
     #diff = getAngleDiff(0,diff)
-    s_per_deg = 0.018
+    s_per_deg = 0.013
     rotate_speed = 20
     if diff < 0:
         rotate_speed *= -1
