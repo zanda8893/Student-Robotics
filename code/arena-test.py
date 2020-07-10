@@ -84,10 +84,11 @@ def test6():
     
 while True:
     m = R.see()
-    A.addMarkers(m)
+    #A.addMarkers(m)
     cp = position.findPosition(m)
     if cp is None:
         continue
     print("Current position: {0}   {1}".format(conversions.toSimCoords(cp[0]),cp[1]))
     print("Arena:\n",A)
+    print("Closest: ",A.getNearest(cp[0],MARKER_TOKEN_SILVER))
     R.sleep(1)

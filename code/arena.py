@@ -155,8 +155,6 @@ class Arena():
 
     def getNearest(self,p,col,t=6,n=0,inZone=False):
         #col=colour, t=time since seeing cube, n=nth furthest (0=closest)
-        i = -1
-        old = 100000
         l = []
         for ind in range(len(self.cubeList)):
             cube = self.cubeList[ind]
@@ -170,7 +168,7 @@ class Arena():
         l.sort(key=lambda c: c.dist(p))
         if len(l) <= i:
             return None
-        return l[i]
+        return l[n]
 
     def getCubeById(self,cubeId):
         for c in self.cubeList:
