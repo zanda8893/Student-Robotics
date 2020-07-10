@@ -113,7 +113,7 @@ done_cond = threading.Condition(route_lock)
 def rotateFromDiff(diff):
     global override_cond
     diff = getAngleDiff(0,diff)
-    s_per_deg = 0.01
+    s_per_deg = 0.022
     rotate_speed = 20
     if diff < 0:
         rotate_speed *= -1
@@ -151,7 +151,7 @@ def goToPointStraight(prev,nex):
         if arrivedPt(cp[0],prev,nex):
             driveStraight(0)
             return 0
-        checkAngleSync(cp[1],prev,nex)
+        checkAngleSync(cp[1],cp[0],nex)
    
 #returns route
 def beginRouting(p):

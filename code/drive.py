@@ -115,7 +115,7 @@ def getAngleDiff(a,ta):
 
 def rotateFromDiff(diff):
     #diff = getAngleDiff(0,diff)
-    s_per_deg = 0.01
+    s_per_deg = 0.022
     rotate_speed = 20
     if diff < 0:
         rotate_speed *= -1
@@ -127,18 +127,21 @@ def driveRotateToAngle(ang):
     m = robot_obj.R.see()
     cp = position.findPosition(m)
     if cp is None:
+        print("Cant scan")
         return False
-    diff = position.angleDiff(ang,cp[1])
+    diff = position.getAngleDiff(ang,cp[1])
+    print(f"Diff: {diff}")
     while math.fabs(diff) > max_dev:
         rotateFromDiff(diff)
         m = robot_obj.R.see()
         cp = position.findPosition(m)
-        if cp is None or prev_p is None:
+        if cp is None:
+            print("Can't scan")
             diff = 0
             continue
         a = cp[1]
-        prev_a = prev_p[1]
         diff = getAngleDiff(ang,a)
+        print(f"Angle {a} Diff {diff}")
     driveStraight(0)
 
 def driveRotateAngle(ang):
