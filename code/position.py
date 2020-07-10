@@ -72,6 +72,13 @@ def wtf(rp,side):
 
     return rp
 
+#returns corrected orientation
+def wtf2(pol,orient):
+    if math.fabs(orient - pol) > 90:
+        print("Correcting!")
+        return (orient + 180) % 360
+    return orient
+
 camera_distance = 5.2
 
 #returns a list containing the Position and angle of the robot
@@ -88,7 +95,8 @@ def findInfoMarker(marker):
     p = Position(d*deg.cos(ang),d*deg.sin(ang))
 
     #robot angle, robot position
-    ra = (marker.orientation.rot_y + ma + 180) % 360
+    orient = wtf2(marker.centre.polar.rot_y,marker.orientation.rot_y)
+    ra = (orient + ma + 180) % 360
     rp = mp + p.rotate(ma)
 
     """
@@ -97,7 +105,9 @@ def findInfoMarker(marker):
     """
 
     rp = wtf(rp,markers.markerSide(marker))
-    #print("Pos: {0} Code: {1}".format(toSimCoords(rp),marker.info.code))
+    if marker.info.code == 6:
+        print("Or {0} ma {1} ra {2}".format(marker.orientation.rot_y,ma,ra))
+    #print("Pos: {0} Ang: {2} Code: {1}".format(toSimCoords(rp),marker.info.code,ra))
     return [rp,ra]
 
 #gets an average over several markers
