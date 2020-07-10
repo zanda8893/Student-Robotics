@@ -17,7 +17,7 @@ class Position:
     def __repr__(self):
         return self.__str__()
     def dist(self,p):
-        return math.dist((self.x,self.y),(p.x,p.y))
+        return math.sqrt((self.x-p.x)**2+(self.y-p.y)**2)
     def rotate(self,angle):
         #rotate point anticlockwise about origin
         x = self.x
@@ -179,3 +179,7 @@ def translateToZone(p,zone):
     for i in range(zone):
         p = Position(p.y,5750-p.x) #rotate clockwise
     return p
+
+#convert a bearing from zone 0 to zone
+def bearingToZone(a,zone):
+    return (a - 90*zone) % 360
