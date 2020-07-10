@@ -20,7 +20,7 @@ while True:
 
     #Find robot position
     #Rp = Robot coordinates, Ra = Robot angle
-    Rp,Ra = position.findPosition(markers) 
+    Rp,Ra = position.findPosition(markers)
     A.addMarkers(markers,Rp,Ra)
 
     #Find nearest cube
@@ -39,7 +39,6 @@ while True:
         pass
 
     claw.grabClawSync()
-    """#~~
 
     #Hp = Home position ~~find place for cube~~Luka
 
