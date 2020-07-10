@@ -2,6 +2,7 @@ from sr.robot import *
 import deg
 import math
 import robot_obj
+from safediv import *
 
 class Position:
     def __init__(self,x,y):
@@ -40,33 +41,36 @@ from conversions import *
 
 """
 These functions shouldn't be needed if SR fix the simulator
+"""
 
 #apply a polynomial to the point to correct errors
 def polyDistance(d):
     d = d/1000
-    d = 0.0049 * d**2 + 0.966 * d - 0.198 - d
+    
     d *= 1000
     return p
 
 def wtf(rp,side):
-    adj = 0
+    d = 0
     if side % 2:
-        adj = polyDistance(rp.y)
+        d = rp.x
     else:
-        adj = polyDistance(rp.x)
-
+        d = rp.y
+    if side == 1 or side == 2:
+        d = 5750 - d
+        
+    magic_number = 110 + 100 * (d / 5750)
+    #print("Magic",magic_number)
     if side==0:
-        rp.x += adj
+        rp.x += magic_number
     elif side==1:
-        rp.y -= adj
+        rp.y -= magic_number
     elif side==2:
-        rp.x -= adj
+        rp.x -= magic_number
     else:
-        rp.y += adj
+        rp.y += magic_number
 
     return rp
-"""
-
 
 camera_distance = 5.2
 
@@ -87,9 +91,12 @@ def findInfoMarker(marker):
     ra = (marker.orientation.rot_y + ma + 180) % 360
     rp = mp + p.rotate(ma)
 
+    """
     cd = camera_distance
     rp -= Position(cd * deg.cos(ra),cd * deg.sin(ra))
+    """
 
+    rp = wtf(rp,markers.markerSide(marker))
     #print("Pos: {0} Code: {1}".format(toSimCoords(rp),marker.info.code))
     return [rp,ra]
 

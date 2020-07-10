@@ -121,8 +121,8 @@ class Arena():
             if r is None:
                 return
             rp = r[0]
-        rx = 500#rp.x
-        ry = 500#rp.y
+        rx = rp.x
+        ry = rp.y
         for m in markers:
             if m.info.marker_type == MARKER_ARENA:
                 continue

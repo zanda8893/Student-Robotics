@@ -153,11 +153,13 @@ def beginRouting(p):
     global route_done,done_cond
     route_lock.acquire()
 
+    #init
     route_done = 0
     route_tid = threading.get_ident()
     override_cond.notify_all()
     driveStraight(0)
 
+    #get position
     m = R.see()
     A.addMarkers(m)
     cp = position.findPosition(m)
@@ -175,7 +177,9 @@ def beginRouting(p):
         route_done = -1
         done_cond.notify_all()
         route_lock.release()
-        return False
+        return None
+
+    return route
     
 def goToPointSync(p):
     
