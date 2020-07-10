@@ -120,7 +120,7 @@ def checkAngleSync(a,prev,nex):
                 diff = 0
                 continue
             a = cp[1]
-            diff = getAngleDiff(a,ta)
+            diff = position.getAngleDiff(a,ta)
     driveStraight(drive_power)
 
 #0 for success
@@ -140,7 +140,7 @@ def goToPointStraight(prev,nex):
         if cp[0].dist(nex) > 100:
             lastPt = cp[0]
         checkAngleSync(cp[1],lastPt,nex)
-   
+
 #returns route
 def beginRouting(p):
     global route_lock,route_tid,override_cond
@@ -193,7 +193,7 @@ def goToPointSync(p):
     if route is None:
         print("Unable to find route!")
         return False
-    
+
     i = 0
     prev = route[i]
     nex = route[i+1]
@@ -223,7 +223,7 @@ def goToPointSync(p):
         else:
             print("Arrived at intermediate pt!")
             i += 1
-        
+
         if len(route) <= i+1:
             print("Finished!")
             route_done = 1
