@@ -12,6 +12,6 @@ from arena import A
 #print("Final",route.findRoute(Position(500,500),Position(5000,5000)))
 #print("Time: ",R.time()-t0)
 
-print(A)
-res = route.goToPointSync(Position(2045,2875))
+
+res = route.goToPointStraight(Position(500,500),Position(1975,1500))
 print("Finished",res)

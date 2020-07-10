@@ -108,13 +108,7 @@ route_lock = threading.Lock()
 override_cond = threading.Condition(route_lock)
 done_cond = threading.Condition(route_lock)
 
-def getAngleDiff(a,ta):
-    diff = (ta - a)
-    if diff < -180:
-        diff += 360
-    if diff > 180:
-        diff -= 360
-    return diff
+
 
 def rotateFromDiff(diff):
     global override_cond
@@ -125,59 +119,39 @@ def rotateFromDiff(diff):
         rotate_speed *= -1
     t = math.fabs(diff) * s_per_deg
     driveRotate(rotate_speed,t)
-    t0 = R.time()
-    while R.time() < t0 + t:
-        override_cond.wait(timeout=t*0.8)
-    
 
 def checkAngleSync(a,prev,nex):
-    global drive_power,override_cond,route_tid
+    global drive_power
     max_angle_dev = 10
     dev_low_wm = 1
-    ta = deg.atan(safeDiv(nex.y-prev.y,nex.x-prev.x))
-    diff = getAngleDiff(a,ta)
+    ta = position.anglePts(prev,nex)
+    diff = position.getAngleDiff(a,ta)
     if math.fabs(diff) > max_angle_dev:
-        print(f"Wonky! Should be {ta}")
         while math.fabs(diff) > dev_low_wm:
             rotateFromDiff(diff)
-            if route_tid != threading.get_ident():
-                return
             m = R.see()
-            #A.addMarkers(m)
             cp = position.findPosition(m)
             if cp is None:
                 diff = 0
                 continue
             a = cp[1]
             diff = getAngleDiff(a,ta)
-        print("Fixed wonk!")
     driveStraight(drive_power)
 
-#0 for success, 1 for needs reroute, 2 for overriden
+#0 for success
 def goToPointStraight(prev,nex):
-    global override_cond
-    print("Going to point",nex)
+#    print("Going to point",nex)
     while True:
         m = R.see()
         #A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
             continue
-        print("Current position {0}".format(cp))
+        #print("Current position {0}".format(cp))
         if arrivedPt(cp[0],prev,nex):
             driveStraight(0)
-            return 0,cp[0],cp[1]
-        """if not A.pathClear(cp[0],nex):
-            print("Uh oh, path not clear!")
-            driveStraightSync(-50,1)
-            return 1,cp[0],cp[1]"""
-        #if offRoute(cp[0],prev,nex):
-        #    driveStraight(0)
-        #    return 1,cp[0],cp[1]
+            return 0
         checkAngleSync(cp[1],prev,nex)
-        override_cond.wait(timeout=0.1)
-        if route_tid != threading.get_ident():
-            return 2,cp[0],cp[1]
    
 #returns route
 def beginRouting(p):

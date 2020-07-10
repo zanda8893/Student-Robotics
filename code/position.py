@@ -150,3 +150,26 @@ def paraDist(start,end,p):
     d = p.dist(start)
     opp = d * deg.cos(a)
     return opp
+
+#bearing of end from start
+def anglePts(start,end):
+    ang = deg.atan(safeDiv(end.y-start.y,end.x-start.x))
+    if start.x > end.x:
+        ang = (ang+180) % 360
+    elif start.x == end.x:
+        if end.y > start.y:
+            ang = 90
+        elif end.y < start.y:
+            ang = -90
+        else:
+            ang = 0
+    return ang
+
+#gets difference between angles between -180 and 180
+def getAngleDiff(a,ta):
+    diff = (ta - a)
+    while diff < -180:
+        diff += 360
+    while diff > 180:
+        diff -= 360
+    return diff

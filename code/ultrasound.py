@@ -12,4 +12,7 @@ sensor:
 Only measures up to 300mm
 """
 def getDistance(sensor):
-    return R.ruggeduinos[0].analogue_read(sensor) * 1000
+    x = R.ruggeduinos[0].analogue_read(sensor) * 1000
+    if x > 290:
+        return None
+    return x
