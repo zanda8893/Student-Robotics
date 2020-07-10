@@ -1,22 +1,20 @@
-import drive, robot_obj
-#Co ordinates for cubes
-
-"""s
-drive.driveRotateAngle(0)
-robot_obj.R.sleep(0.9)
-drive.driveStraightSync(60,10)
-robot_obj.R.sleep(0.9)
-drive.driveRotateSync(50,0.7)
-robot_obj.R.sleep(0.9)
-drive.driveStraightSync(75,3.4)
-"""
+import drive, robot_obj, conversions
 
 
+def convert(zone):
+    if zone == 0:
+         p = conversions.fromSimCoords(Position(-p.x,-p.y))
+    if zone == 1:
+         p = conversions.fromSimCoords(Position(p.x,-p.y))
+    if zone == 2:
+         p = conversions.fromSimCoords(Position(p.x,p.y))
+    if zone == 3:
+         p = conversions.fromSimCoords(Position(-p.x,p.y))
 
 
-
-def goToCube(p):
-    if p == "test":
+def getReturnCube(p):
+    og_Rp = position.findPosition(robot_obj.R.see())
+    if p == "test" or p == "test1" or p == "test2" or p == "test3":
         print("Rotate")
         drive.driveRotateToAngle(0)
         robot_obj.R.sleep(0.9)
@@ -25,10 +23,7 @@ def goToCube(p):
         drive.driveRotateToAngle(89)
         robot_obj.R.sleep(0.9)
         drive.driveStraightSync(60,2)
-        """
         if robot_obj.R.ruggeduinos[0].digital_read(4) == False:
-            drive.driveStraightSync(-60,2)
-            goToCube("test")
-        else:
-            pass
-        """
+            drive.driveStraightSync(-30,2)
+            route.goToPointStraight(og_Rp)
+            goToCube(p)
