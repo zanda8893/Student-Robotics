@@ -139,7 +139,6 @@ def driveRotateAngle(ang):
         diff = ang - (a - prev_a)
         diff = getAngleDiff(diff,0)
     driveStraight(0)
-    print(cp[1])
     
 #true if all asynchronnous operations have finished
 def driveDone():
