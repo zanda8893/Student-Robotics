@@ -3,10 +3,11 @@
 #~~ = Yet to be implimented/written
 
 #Imports
-import lift, claw, position #, route
+import lift, claw, position, route
 from robot_obj import R
 from arena import A
 from sr.robot import *
+
 
 while True:
     #Start
@@ -25,7 +26,9 @@ while True:
 
     #Find nearest cube
     #colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
-    cube = A.getNearest(p,MARKER_TOKEN_GOLD)
+    cube = A.getNearest(Rp,MARKER_TOKEN_GOLD)
+
+    print(cube)
 
     if cube.p.onPlatform():
         lift.raiseLift()
@@ -33,10 +36,14 @@ while True:
         lift.lowerLift()
 
     #Go to nearest cube
-    res = orienting.goToCube(cube.code)
+    #res = orienting.goToCube(cube.code)
+    route.goToPointSync(cube.code)
+
+    """
     if not res:
         #~~Code for routing error~~
         pass
+    """
 
     claw.grabClawSync()
 
@@ -47,8 +54,9 @@ while True:
     #Wait to arrive
     if wait() ==1:
         continue
-    else:
+    #else:
         #~~Code for routing error~~
+
     claw.openClaw()
 
     #End
