@@ -82,5 +82,12 @@ def test6():
     prList(A.getRoutePts(p,Position(1000,1000)))
 
     
-test6()
-test3()
+while True:
+    m = R.see()
+    A.addMarkers(m)
+    cp = position.findPosition(m)
+    if cp is None:
+        continue
+    print("Current position: {0}   {1}".format(conversions.toSimCoords(cp[0]),cp[1]))
+    print("Arena:\n",A)
+    R.sleep(1)

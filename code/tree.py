@@ -49,3 +49,33 @@ class Tree():
     def getData(self,node):
         return self.nodes[node][0]
     
+    def getAllData(self):
+        l = []
+        for n in self.nodes:
+            l.append(n[0])
+        return l
+
+    def getAllNodes(self):
+        l = []
+        for n in range(len(self.nodes)):
+            l.append(n)
+        return l
+
+    def nodesBetween(self,start,end):
+        l = [start]
+        spath = self.pathToNode(start)
+        epath = self.pathToNode(end)
+        i = 0
+        comm = 0
+        while min(len(spath),len(epath)) > 0:
+            if spath[0] == epath[0]:
+                comm = spath[0]
+                spath.pop(0)
+                epath.pop(0)
+        spath.reverse()
+        ret = spath + [comm] + epath
+        return ret
+        
+    def dataBetween(self,start,end):
+        l = [self.getData(n) for n in self.nodesBetween(start,end)]
+        return l

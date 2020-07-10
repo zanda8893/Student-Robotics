@@ -93,7 +93,24 @@ robot_platform_distance = 300
 
 class Arena():
     def __init__(self):
-        self.cubeList = []
+        self.cubeList = [
+            Cube(code=32,color=MARKER_TOKEN_GOLD,p=Position(3775,3775),a=0),
+            Cube(code=33,color=MARKER_TOKEN_GOLD,p=Position(3775,1975),a=0),
+            Cube(code=34,color=MARKER_TOKEN_GOLD,p=Position(1975,1975),a=0),
+            Cube(code=35,color=MARKER_TOKEN_GOLD,p=Position(1975,3775),a=0),
+            Cube(code=36,color=MARKER_TOKEN_GOLD,p=Position(2875,2455),a=0),
+            Cube(code=37,color=MARKER_TOKEN_GOLD,p=Position(3295,2875),a=0),
+            Cube(code=38,color=MARKER_TOKEN_GOLD,p=Position(2455,2875),a=0),
+            Cube(code=39,color=MARKER_TOKEN_GOLD,p=Position(2875,3295),a=0),
+            Cube(code=40,color=MARKER_TOKEN_SILVER,p=Position(3195,3195),a=0),
+            Cube(code=41,color=MARKER_TOKEN_SILVER,p=Position(3195,2555),a=0),
+            Cube(code=42,color=MARKER_TOKEN_SILVER,p=Position(2555,2555),a=0),
+            Cube(code=43,color=MARKER_TOKEN_SILVER,p=Position(2555,3195),a=0),
+            Cube(code=44,color=MARKER_TOKEN_SILVER,p=Position(4175,2875),a=45),
+            Cube(code=45,color=MARKER_TOKEN_SILVER,p=Position(1575,2875),a=45),
+            Cube(code=46,color=MARKER_TOKEN_SILVER,p=Position(2875,4175),a=45),
+            Cube(code=47,color=MARKER_TOKEN_SILVER,p=Position(2875,1575),a=45)
+        ]
 
     def __str__(self):
         s = ""
@@ -105,6 +122,10 @@ class Arena():
         return self.__str__()
 
     def addCube(self,newCube):
+        return
+    """
+        if newCube.code == 33:
+            print("CUBE 33: {0}".format(toSimCoords(newCube.p)))
         found = False
         for i in range(len(self.cubeList)):
             cube = self.cubeList[i]
@@ -116,7 +137,7 @@ class Arena():
         if found != True:
             print("Cube {0} detected at {1}!".format(newCube.code,toSimCoords(newCube.p)))
             self.cubeList.append(newCube)
-
+    """
     def addMarkers(self,markers,rp=None,ra=None):
         if rp is None or ra is None:
             r = position.findPosition(markers)
@@ -132,25 +153,24 @@ class Arena():
             c = Cube(m,rx,ry,ra)
             self.addCube(c)
 
-    def getNearest(self,p,col,t=6):
-        #col=colour, t=time since seeing cube
+    def getNearest(self,p,col,t=6,n=0,inZone=False):
+        #col=colour, t=time since seeing cube, n=nth furthest (0=closest)
         i = -1
         old = 100000
+        l = []
         for ind in range(len(self.cubeList)):
             cube = self.cubeList[ind]
             if cube.color != col:
                 continue
             if R.time() - cube.ts > t:
                 continue
-            if cubeInZone(cube,R.zone):
+            if cubeInZone(cube,R.zone) != inZone:
                 continue
-            newD = math.sqrt((cube.x - p.x)**2 + (cube.y - p.y)**2)
-            if newD < old:
-                old = newD
-                i = ind
-        if i >= 0:
-            return self.cubeList[i]
-        return None
+            l.append(self.cubeList[ind])
+        l.sort(key=lambda c: c.dist(p))
+        if len(l) <= i:
+            return None
+        return l[i]
 
     def getCubeById(self,cubeId):
         for c in self.cubeList:
@@ -194,6 +214,8 @@ class Arena():
         pts = []
         platform_margin = 160
         for cube in self.cubeList:
+            if cube.p.onPlatform():
+                continue
             if R.time() - cube.ts <= tlim:
                 pts += cube.getRoutePts(p,robot_cube_distance+50)
         poss = (5750/2-600-platform_margin,5750/2+600+platform_margin)
@@ -211,6 +233,7 @@ class Arena():
                 ret.append(pt)
             #else:
                 #print("Point {0} isn't clear".format(pt))
+        print("Potential route points:",ret)
         return ret
 
 A = Arena()

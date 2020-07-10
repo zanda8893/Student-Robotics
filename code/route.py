@@ -1,4 +1,5 @@
 import position
+from position import Position
 import arena
 from arena import A
 from tree import Tree
@@ -47,19 +48,38 @@ def exploreBranch(tree,node,end):
 
     return -1
 
+def translateToZone(p,zone):
+    for i in range(zone):
+        p = Position(p.y,5750-p.x) #rotate clockwise
+    return p
+
+initial_tree = Tree(Position(1425,1425))
+level_1_pts = [Position(1155,3225),Position(1585,2345),
+               Position(3225,1155),Position(2345,1585)]
+
 def findRoute(start,end):
-    tree = Tree(start)
-    max_depth = 10
-    for i in range(max_depth):
-        leaves = tree.leaves()
-        for l in leaves:
-            res = exploreBranch(tree,l,end)
-            if res >= 0:
-                npath = tree.pathToNode(res)
-                path = [tree.getData(n) for n in npath]
-                print("Path:",path)
-                return path
-    return None
+    l = initial_tree.getAllNodes()
+    l.sort(key=lambda n:initial_tree.getData(n).dist(start))
+    snode = l[0]
+    l.sort(key=lambda n:initial_tree.getData(n).dist(end))
+    enode = l[0]
+    route = [start]
+    route += initial_tree.dataBetween(snode,enode)
+    route.append(end)
+    return route
+
+def initTree():
+    global initial_tree
+    c = lambda p:translateToZone(p,R.zone)
+    n1 = initial_tree.addNode(0,c(Position(1155,3225)))
+    n2 = initial_tree.addNode(n1,c(Position(1935,3295)))
+    n1 = initial_tree.addNode(0,c(Position(1585,2345)))
+
+    n1 = initial_tree.addNode(0,c(Position(3225,1155)))
+    n2 = initial_tree.addNode(n1,c(Position(3295,1935)))
+    n1 = initial_tree.addNode(0,c(Position(2345,1585)))
+
+initTree()
 
 def offRoute(p,prev,nex,route=None):
     max_dev = 80
@@ -117,13 +137,13 @@ def checkAngleSync(a,prev,nex):
     ta = deg.atan(safeDiv(nex.y-prev.y,nex.x-prev.x))
     diff = getAngleDiff(a,ta)
     if math.fabs(diff) > max_angle_dev:
-        print("Wonky!")
+        print(f"Wonky! Should be {ta}")
         while math.fabs(diff) > dev_low_wm:
             rotateFromDiff(diff)
             if route_tid != threading.get_ident():
                 return
             m = R.see()
-            A.addMarkers(m)
+            #A.addMarkers(m)
             cp = position.findPosition(m)
             if cp is None:
                 diff = 0
@@ -139,7 +159,7 @@ def goToPointStraight(prev,nex):
     print("Going to point",nex)
     while True:
         m = R.see()
-        A.addMarkers(m)
+        #A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
             continue
@@ -147,10 +167,10 @@ def goToPointStraight(prev,nex):
         if arrivedPt(cp[0],prev,nex):
             driveStraight(0)
             return 0,cp[0],cp[1]
-        if not A.pathClear(cp[0],nex):
+        """if not A.pathClear(cp[0],nex):
             print("Uh oh, path not clear!")
             driveStraightSync(-50,1)
-            return 1,cp[0],cp[1]
+            return 1,cp[0],cp[1]"""
         #if offRoute(cp[0],prev,nex):
         #    driveStraight(0)
         #    return 1,cp[0],cp[1]
@@ -173,13 +193,13 @@ def beginRouting(p):
 
     #get position
     m = R.see()
-    A.addMarkers(m)
+    #A.addMarkers(m)
     cp = position.findPosition(m)
     if cp is None:
         route_done = -1
         done_cond.notify_all()
         route_lock.release()
-        return None
+        return None,curr,ang
 
     start,ang = cp[0],cp[1]
     curr = start
@@ -189,7 +209,7 @@ def beginRouting(p):
         route_done = -1
         done_cond.notify_all()
         route_lock.release()
-        return None
+        return None,curr,ang
 
     return route,curr,ang
 
@@ -209,6 +229,7 @@ def rotateUntilPos():
 def goToPointSync(p):
     route,curr,ang = beginRouting(p)
     if route is None:
+        print("Unable to find route!")
         return False
     
     i = 0

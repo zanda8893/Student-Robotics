@@ -5,12 +5,13 @@ from robot_obj import R
 from arena import A
 
 
-markers = R.see()
-A.addMarkers(markers)
+#markers = R.see()
+#A.addMarkers(markers)
 
-t0 = R.time()
-print("Final",route.findRoute(Position(500,500),Position(5000,5000)))
-print("Time: ",R.time()-t0)
+#t0 = R.time()
+#print("Final",route.findRoute(Position(500,500),Position(5000,5000)))
+#print("Time: ",R.time()-t0)
 
-res = route.goToPointSync(Position(5000,5000))
+print(A)
+res = route.goToPointSync(Position(2045,2875))
 print("Finished",res)
