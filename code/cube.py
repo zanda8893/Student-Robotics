@@ -32,9 +32,9 @@ class Cube():
 
         #self.a is the anticlockwise angle between the marker's normal
         #and the positive x-axis
-
+        print("\n\n--------------------")
         d = marker.dist * 1000
-        print(f"Marker distance {d}")
+        print(f"Marker distance {d} orientation {marker.orientation.rot_y}")
         self.a = (ra - marker.orientation.rot_y + 180) % 360
         print(f"Marker angle {self.a}")
         adiff = ra - marker.rot_y

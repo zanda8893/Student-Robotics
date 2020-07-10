@@ -1,7 +1,8 @@
 import robot_obj
 import time
 import threading
-
+import position
+import math
 """
 Functions you're allowed to use:
 kill() - should be called when the entire code exits
@@ -104,6 +105,42 @@ def driveRotateSync(power,t):
 def driveRotate(power,t=-1):
     drive(-power,power,t)
 
+def getAngleDiff(a,ta):
+    diff = (a - ta)
+    if diff < -180:
+        diff += 360
+    if diff > 180:
+        diff -= 360
+    return diff
+
+def rotateFromDiff(diff):
+    #diff = getAngleDiff(0,diff)
+    s_per_deg = 0.01
+    rotate_speed = 20
+    if diff < 0:
+        rotate_speed *= -1
+    t = math.fabs(diff) * s_per_deg
+    driveRotateSync(rotate_speed,t)
+    
+def driveRotateAngle(ang):
+    max_dev = 1
+    m = robot_obj.R.see()
+    prev_p = position.findPosition(m)
+    diff = ang
+    while math.fabs(diff) > max_dev:
+        rotateFromDiff(diff)
+        m = robot_obj.R.see()
+        cp = position.findPosition(m)
+        if cp is None or prev_p is None:
+            diff = 0
+            continue
+        a = cp[1]
+        prev_a = prev_p[1]
+        diff = ang - (a - prev_a)
+        diff = getAngleDiff(diff,0)
+    driveStraight(0)
+    print(cp[1])
+    
 #true if all asynchronnous operations have finished
 def driveDone():
     global stop_cond,stop_time
