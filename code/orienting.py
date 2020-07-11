@@ -13,7 +13,7 @@ position_distance = 150
 preposition_distance = 400 #distance to travel from pre to pos
 collision_distance = 280
 platform_stop_dist = 10
-
+"""
 def possiblePrePositions(cube):
     global position_distance,preposition_distance,collision_distance
     ret = []
@@ -52,7 +52,7 @@ def getPrePosition(cube,p):
         return getPrePositionPlatform(cube)
     else:
         return getPrePositionOther(cube,p)
-
+"""
 """
 Deprecated: use drive.driveRotateToAngle() instead
 sec_per_deg = 0.013
@@ -103,6 +103,7 @@ def goToCube(cubeId,currPos):
 """
 
 #curr=current position,pos=cube position,ang=cube angle (either 0 or 45)
+#curr can be None, in which case a position is found automatically
 def getPre(curr,pos,ang):
     global position_distance,preposition_distance,collision_distance
     poss = []
@@ -113,6 +114,14 @@ def getPre(curr,pos,ang):
         p = Position(x,y) + pos
         #if arena.A.ptClear(p,collision_distance):
         poss.append(p)
+
+    if curr is None:
+        cp = position.getPosition()
+        if cp is None:
+            curr = position.translateToZone(Position(0,0))
+        else:
+            curr = cp[0]
+            
     poss.sort(key=lambda pt:pt.dist(curr))
     return poss[0]
 

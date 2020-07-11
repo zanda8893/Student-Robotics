@@ -7,7 +7,8 @@ from position import Position
 p,a = position.getPosition()
 print(orienting.getPre(p,Position(1975,1975),0))
 print(orienting.getPre(p,Position(2455,2875),45))
-
+print(orienting.getPre(None,Position(1975,1975),0))
+print(orienting.getPre(None,Position(2455,2875),45))
 """
 while True:
     orienting.approachCube()

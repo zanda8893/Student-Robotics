@@ -24,13 +24,14 @@ while True:
     print("Position: {0}".format(conversions.toSimCoords(x[0])))
     robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
     for m in markers:
-        if m.info.marker_type == MARKER_ARENA:
+        if m.info.marker_type == MARKER_ARENA and m.info.code==6:
+            print("Arena marker: ",m.info.code,m.orientation.rot_y)
             continue
      
         #make cube, print cube
-        c = Cube(m,robot_x,robot_y,robot_a)
+        #c = Cube(m,robot_x,robot_y,robot_a)
 
-        print(c.getRoutePts(Position(0,0),50))
-        p = conversions.toSimCoords(Position(c.x,c.y))
-        print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))
+        #print(c.getRoutePts(Position(0,0),50))
+        #p = conversions.toSimCoords(Position(c.x,c.y))
+        #print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))
     R.sleep(1)
