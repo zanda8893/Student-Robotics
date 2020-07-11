@@ -138,10 +138,9 @@ def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
     i=1
     while R.time() < t0 + timeout:
         i += 1
-        if i % 10 == 0:
-            if not checkColor(color):
-                drive.driveStraightSync(-20,1)
-                return False
+        if not checkColor(color):
+            drive.driveStraightSync(-20,2)
+            return False
         leftd = ultrasound.getDistance(0)
         rightd = ultrasound.getDistance(1)
         print(f"Left {leftd} Right {rightd}")
