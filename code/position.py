@@ -2,6 +2,7 @@ from sr.robot import *
 import deg
 import math
 import robot_obj
+from robot_obj import R
 from safediv import *
 
 class Position:
@@ -185,11 +186,15 @@ def getAngleDiff(a,ta):
     return diff
 
 #translate a position from zone 0 to zone
-def translateToZone(p,zone):
+def translateToZone(p,zone=None):
+    if zone is None:
+        zone = R.zone
     for i in range(zone):
         p = Position(p.y,5750-p.x) #rotate clockwise
     return p
 
 #convert a bearing from zone 0 to zone
-def bearingToZone(a,zone):
+def bearingToZone(a,zone=None):
+    if zone is None:
+        zone = R.zone
     return (a - 90*zone) % 360

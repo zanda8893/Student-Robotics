@@ -4,17 +4,17 @@ from sr.robot import *
 import claw,lift
 import orienting
 import position
-from position import Position
+from position import *
 import route
 
 
 curr,a = position.getPosition()
-p = orienting.getPre(curr,Position(1975,1975),0)
+p = orienting.getPre(curr,translateToZone(Position(1975,1975)),0)
 
 route.goToPointStraight(curr,p)
-driveRotateToAngle(position.anglePts(p,Position(1975,1975)))
+driveRotateToAngle(position.anglePts(p,translateToZone(Position(1975,1975))))
 orienting.approachCube()
 claw.grabClawSync()
 lift.raiseLiftSync()
-driveRotateToAngle(45)
+driveRotateToAngle(position.bearingToZone(45))
 driveStraightSync(-50,3)
