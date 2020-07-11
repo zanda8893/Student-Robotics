@@ -1,5 +1,5 @@
 import drive, robot_obj, conversions, orienting, position, claw, route, lift
-from position import Position
+from position import *
 
 #xh = 100
 #yh = 750
@@ -58,7 +58,7 @@ def getCube(c):
         orienting.approachCube()
         claw.grabClawSync()
         drive.driveRotateToAngle(ah)
-        drive.driveStraightSync(40,5)
+        drive.driveStraightSync(40,3)
         """
         if robot_obj.R.ruggeduinos[0].digital_read(5) == False:
             print("Get cube failed")
@@ -69,36 +69,28 @@ def getCube(c):
         """
 
 def getCube2():
-    robot_obj.R.sleep(1)
-    og_Rp = position.findPosition(robot_obj.R.see())
-    if og_Rp is None:
-         return False
-    route.goToPointStraight(og_Rp[0],pos)
-    og_Rp = position.findPosition(robot_obj.R.see())
-    if og_Rp is None:
-         return False
-    route.goToPointStraight(og_Rp[0],pos1)
+    #robot_obj.R.sleep(1)
+    route.goToPointStraight(None,translateToZone(Position(1950,1975)))
+    route.goToPointStraight(None,pos1)
     drive.driveRotateToAngle(position.bearingToZone(90))
     orienting.approachCube()
     claw.grabClawSync()
+    drive.driveRotateToAngle(bearingToZone(180))
+    route.goToPointStraight(None,translateToZone(Position(1975,1975)))
     drive.driveRotateToAngle(ah2)
-    drive.driveStraightSync(40,8)
+    drive.driveStraightSync(40,3)
 
 def getCube3():
     robot_obj.R.sleep(1)
-    og_Rp = position.findPosition(robot_obj.R.see())
-    if og_Rp is None:
-         return False
-    route.goToPointStraight(og_Rp[0],pos3)
-    og_Rp = position.findPosition(robot_obj.R.see())
-    if og_Rp is None:
-         return False
-    route.goToPointStraight(og_Rp[0],pos2)
+    route.goToPointStraight(None,translateToZone(Position(1975,1950)))
+    route.goToPointStraight(None,pos2)
     orienting.approachCube()
     claw.grabClawSync()
-    drive.driveRotateToAngle(ah3)
-    drive.driveStraightSync(30,13)
-
+    #drive.driveRotateToAngle(ah3)
+    #drive.driveStraightSync(30,13)
+    route.goToPointStraight(None,translateToZone(Position(1975,1975)))
+    drive.driveRotateToAngle(bearingToZone(225))
+    drive.driveStraight(40,3)
 
 def getCube4():
     robot_obj.R.sleep(1)

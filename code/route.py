@@ -127,10 +127,10 @@ def goToPointStraight(prev,nex):
         if init is None:
             init = cp[0]
         #print("Current position {0}".format(cp))
-        if arrivedPt(cp[0],prev,nex):
+        if arrivedPt(cp[0],init,nex):
             driveStraight(0)
             return 0
-        if cp[0].dist(nex) > 500:
+        if cp[0].dist(nex) > 500 or lastPt is None:
             lastPt = cp[0]
         if lastPt is None:
             continue
