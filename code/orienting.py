@@ -6,6 +6,7 @@ import arena
 import math
 import ultrasound
 import drive
+from robot_obj import R
 
 position_distance = 150
 preposition_distance = 400 #distance to travel from pre to pos
@@ -114,9 +115,18 @@ def getPre(curr,pos,ang):
     poss.sort(key=lambda pt:pt.dist(curr))
     return poss[0]
 
-def approachCube():
+#true on success
+def approachCube(color=None,timeout=5):
     min_dist = 100
-    while True:
+    t0 = R.time()
+    markers = R.see()
+    cl = []
+    for m in markers:
+        if m.dist < 300 and not color is None:
+            if m.info.colour != color:
+                return False
+    
+    while R.time() < t0 + timeout:
         leftd = ultrasound.getDistance(0)
         rightd = ultrasound.getDistance(1)
         print(f"Left {leftd} Right {rightd}")
@@ -141,4 +151,6 @@ def approachCube():
         if not m is None and m < min_dist:
             print("Stopping")
             drive.driveStraight(0)
-            return
+            return True
+
+    return False
