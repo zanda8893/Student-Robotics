@@ -31,7 +31,7 @@ killed = False
 #sets gradual acceleration. with p being the target power
 def acceleration(p):
     #c = current power. 0 is used as a temp
-    c = R.motors[0].m0.power
+    c = robot_obj.R.motors[0].m0.power
     #c=0
     while c != p and p >= c:
         c += 20
