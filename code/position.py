@@ -47,7 +47,7 @@ These functions shouldn't be needed if SR fix the simulator
 #apply a polynomial to the point to correct errors
 def polyDistance(d):
     d = d/1000
-    
+
     d *= 1000
     return p
 
@@ -59,7 +59,7 @@ def wtf(rp,side):
         d = rp.y
     if side == 1 or side == 2:
         d = 5750 - d
-        
+
     magic_number = 110 + 100 * (d / 5750)
     #print("Magic",magic_number)
     if side==0:
@@ -191,7 +191,7 @@ def translateToZone(p,zone=None):
         zone = R.zone
     for i in range(zone):
         p = Position(p.y,5750-p.x) #rotate clockwise
-    return p
+    return p.x,p.y
 
 #convert a bearing from zone 0 to zone
 def bearingToZone(a,zone=None):
