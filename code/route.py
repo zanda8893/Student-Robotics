@@ -117,18 +117,23 @@ def checkAngleSync(a,prev,nex):
 def goToPointStraight(prev,nex):
     #print("Going to point",nex)
     lastPt = prev
+    init = prev
     while True:
         m = R.see()
         #A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
             continue
+        if init is None:
+            init = cp[0]
         #print("Current position {0}".format(cp))
         if arrivedPt(cp[0],prev,nex):
             driveStraight(0)
             return 0
-        if cp[0].dist(nex) > 100:
+        if cp[0].dist(nex) > 500:
             lastPt = cp[0]
+        if lastPt is None:
+            continue
         checkAngleSync(cp[1],lastPt,nex)
 
 #returns route

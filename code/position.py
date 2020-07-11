@@ -191,7 +191,7 @@ def translateToZone(p,zone=None):
         zone = R.zone
     for i in range(zone):
         p = Position(p.y,5750-p.x) #rotate clockwise
-    return p.x,p.y
+    return p
 
 #convert a bearing from zone 0 to zone
 def bearingToZone(a,zone=None):

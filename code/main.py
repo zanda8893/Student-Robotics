@@ -14,7 +14,7 @@ while True:
     #Look for markers
     count = count + 1
     if count == 1:
-        robot_obj.R.sleep(2)
+        #robot_obj.R.sleep(2)
         markers = robot_obj.R.see()
         print("See")
         #Find robot position
