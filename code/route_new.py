@@ -21,7 +21,7 @@ y3 = 1850
 
 x4 = 3800
 y4 = 1000
-ah4 = 180
+ah4 = 165
 
 if robot_obj.R.zone != 0:
      x,y = position.translateToZone(position.Position(x,y),robot_obj.R.zone)
