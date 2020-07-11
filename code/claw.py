@@ -37,7 +37,7 @@ def stopClawOnPress(timeout=-1):
             break
         else:
             robot_obj.R.sleep(0.02)
-    setClaw(0)
+    #setClaw(0)
     return x
 
 #closes claw synchronously
