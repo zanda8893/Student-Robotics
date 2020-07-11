@@ -31,9 +31,11 @@ killed = False
 #sets gradual acceleration. with p being the target power
 def acceleration(p):
     #c = current power. 0 is used as a temp
-    c=0
+    c = R.motors[0].m0.power
+    #c=0
     while c != p and p >= c:
         c += 20
+        c = min(c,p)
         driveStraightSync(c,0.25)
     #sets
     if c >= p:
