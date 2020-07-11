@@ -1,13 +1,14 @@
 import deg
 import route
 import position
+from position import Position
 import arena
 import math
 import ultrasound
 import drive
 
 position_distance = 150
-preposition_distance = 150 #distance to travel from pre to pos
+preposition_distance = 400 #distance to travel from pre to pos
 collision_distance = 280
 platform_stop_dist = 10
 
@@ -98,6 +99,20 @@ def goToCube(cubeId,currPos):
     setOrientation(pre_a)
     return driveStraight(preposition_distance)
 """
+
+#curr=current position,pos=cube position,ang=cube angle (either 0 or 45)
+def getPre(curr,pos,ang):
+    global position_distance,preposition_distance,collision_distance
+    poss = []
+    d = position_distance + preposition_distance
+    for a in (0,90,180,270):
+        x = d * deg.sin(ang + a)
+        y = d * deg.cos(ang + a)
+        p = Position(x,y) + pos
+        #if arena.A.ptClear(p,collision_distance):
+        poss.append(p)
+    poss.sort(key=lambda pt:pt.dist(curr))
+    return poss[0]
 
 def approachCube():
     min_dist = 100

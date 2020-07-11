@@ -22,7 +22,7 @@ Note: calling goToPoint() or goToPointSync() while a route is
 already being followed will override the current route
 """
 
-drive_power = 60
+drive_power = 40
 
 def tryRoute(pts):
     if len(pts) < 2:
