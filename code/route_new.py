@@ -19,8 +19,9 @@ ah3 = 210
 x3 = 700
 y3 = 1850
 
-x4 = 3400
-
+x4 = 3800
+y4 = 1000
+ah4 = 180
 
 if robot_obj.R.zone != 0:
      x,y = position.translateToZone(position.Position(x,y),robot_obj.R.zone)
@@ -32,6 +33,7 @@ if robot_obj.R.zone != 0:
      x2, y2 = position.translateToZone(position.Position(x2,y2),robot_obj.R.zone)
      ah3 = bearingToZone(ah3)
      x3, y3 = position.translateToZone(position.Position(x3,y3),robot_obj.R.zone)
+     ah4 = bearingToZone(ah4)
      x4, y4 = position.translateToZone(position.Position(x4,y4),robot_obj.R.zone)
 
 
@@ -84,12 +86,15 @@ def getCube4():
     route.goToPointStraight(og_Rp[0],position.Position(x3,y3))
     og_Rp = position.findPosition(robot_obj.R.see())
     route.goToPointStraight(og_Rp[0],position.Position(x2,y2))
+    drive.driveRotateToAngle(0)
     drive.driveStraightSync(60,2)
     og_Rp = position.findPosition(robot_obj.R.see())
     route.goToPointStraight(og_Rp[0],position.Position(x4,y1))
+    drive.driveRotateToAngle(90)
     orienting.approachCube()
     claw.grabClawSync()
+    drive.driveStraight(40,3)
     og_Rp = position.findPosition(robot_obj.R.see())
-    route.goToPointStraight(og_Rp[0],position.Position(x2,y2))
-    drive.driveRotateToAngle(ah3)
+    route.goToPointStraight(og_Rp[0],position.Position(x4,y4))
+    drive.driveRotateToAngle(ah4)
     drive.driveStraightSync(40,10)
