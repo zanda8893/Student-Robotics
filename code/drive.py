@@ -40,6 +40,15 @@ def acceleration(p):
     #sets
     if c >= p:
         driveStraightSync(p,0.25)
+def stopping():
+    #c = current power. 100 is used as a temp
+    c = robot_obj.R.motors[0].m0.power
+    #c=100
+    while c != 0 and c >= 0:
+        c -= 20
+        driveStraightSync(c,0.25)
+    if 0 >= c:
+        driveStraightSync(0,0.25)
 
 #set drive - do not use from outside this file
 def setDrive(l,r):
