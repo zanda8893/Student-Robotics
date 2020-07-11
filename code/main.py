@@ -5,7 +5,7 @@
 #Imports
 import lift, claw, position, route_new, route, robot_obj
 from arena import A
-
+from sr.robot import *
 
 
 #Start
@@ -21,14 +21,14 @@ print("See")
 print("pos")
 start_Rp,start_Ra = position.findPosition(markers)
 #print("arena")
-#A.addMarkers(markers,Rp,Ra)
+#A.addMarkers(markers,start_Rp,start_Ra)
 
 #Find nearest cube
 #colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
 #print("get near")
-#cube = A.getNearest(Rp,MARKER_TOKEN_GOLD)
+cube = A.getNearest(start_Rp,MARKER_TOKEN_GOLD)
 
-route_new.goToCube("test")
+route_new.getCube(cube)
 claw.grabClaw()
 robot_obj.R.sleep(1)
 Rp = position.findPosition(robot_obj.R.see())
