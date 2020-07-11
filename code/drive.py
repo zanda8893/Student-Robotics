@@ -28,6 +28,17 @@ stop_cond = threading.Condition(stop_lock)
 #stop_lock must be held to access killed
 killed = False
 
+#sets gradual acceleration. with p being the target power
+def acceleration(p):
+    #c = current power. 0 is used as a temp
+    c=0
+    while c != p and p >= c:
+        c += 20
+        driveStraightSync(c,0.25)
+    #sets
+    if c >= p:
+        driveStraightSync(p,0.25)
+
 #set drive - do not use from outside this file
 def setDrive(l,r):
     #print("Setting drive to {0},{1} at {2}".format(l,r,robot_obj.R.time()))
@@ -60,7 +71,7 @@ def kill():
     stop_cond.notify_all()
     drive_lock.release()
     stop_cond.release()
-    
+
 def driveWait():
     global stop_cond,stop_time
     stop_cond.acquire()
@@ -72,7 +83,7 @@ def drive(left,right,t):
     global drive_lock,stop_cond,stop_time
 
     stop_cond.acquire()
-    
+
     drive_lock.acquire()
     setDrive(left,right)
     drive_lock.release()
@@ -86,13 +97,13 @@ def drive(left,right,t):
 
     stop_cond.release()
 
-    
+
 #drive in a striaght line for t seconds
 #negative t means it sets the power indefinitely
 def driveStraightSync(power,t):
     drive(power,power,t)
     driveWait()
-    
+
 #drive in a straight line in the background
 def driveStraight(power,t=-1):
     drive(power,power,t)
@@ -108,7 +119,7 @@ def driveRotate(power,t=-1):
 def driveSync(left,right,t):
     drive(left,right)
     driveWait()
-    
+
 def rotateFromDiff(diff):
     #diff = getAngleDiff(0,diff)
     s_per_deg = 0.013
@@ -117,7 +128,7 @@ def rotateFromDiff(diff):
         rotate_speed *= -1
     t = math.fabs(diff) * s_per_deg
     driveRotateSync(rotate_speed,t)
-    
+
 def driveRotateToAngle(ang):
     max_dev = 1
     m = robot_obj.R.see()
@@ -157,8 +168,8 @@ def driveRotateAngle(ang):
         diff = ang - (a - prev_a)
         diff = position.getAngleDiff(diff,0)
     driveStraight(0)
-    
-    
+
+
 #true if all asynchronnous operations have finished
 def driveDone():
     global stop_cond,stop_time
