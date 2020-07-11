@@ -87,23 +87,23 @@ def getCube3():
     drive.driveRotateToAngle(ah3)
     drive.driveStraightSync(30,13)
 
-"""
+
 def getCube4():
     robot_obj.R.sleep(1)
     og_Rp = position.findPosition(robot_obj.R.see())
-    route.goToPointStraight(og_Rp[0],position.Position(x3,y3))
+    route.goToPointStraight(og_Rp[0],pos3)
     og_Rp = position.findPosition(robot_obj.R.see())
-    route.goToPointStraight(og_Rp[0],position.Position(x2,y2))
+    route.goToPointStraight(og_Rp[0],pos2)
     drive.driveRotateToAngle(0)
     drive.driveStraightSync(60,2)
     og_Rp = position.findPosition(robot_obj.R.see())
-    route.goToPointStraight(og_Rp[0],position.Position(x4,y1))
+    route.goToPointStraight(og_Rp[0],position.Position(pos4.x,pos1.y))
     drive.driveRotateToAngle(90)
     orienting.approachCube()
     claw.grabClawSync()
     drive.driveStraight(40,3)
     og_Rp = position.findPosition(robot_obj.R.see())
-    route.goToPointStraight(og_Rp[0],position.Position(x4,y4))
+    route.goToPointStraight(og_Rp[0],pos4)
     drive.driveRotateToAngle(ah4)
     drive.driveStraightSync(40,10)
-"""
+
