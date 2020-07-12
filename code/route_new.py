@@ -44,7 +44,9 @@ homepositions = [[translateToZone(Position(1000,1400))],
                   translateToZone(Position(1200,1200))],
                  [translateToZone(Position(3775,1000)),
                   translateToZone(Position(800,1600))]]
-
+cubepositions = [translateToZone(Position(1975,1975)),
+                 translateToZone(Position(1975,3775)),
+                 translateToZone(Position(3775,1975))]
 
 if robot_obj.R.zone != 0:
      pos = position.translateToZone(pos)
@@ -72,7 +74,11 @@ def wiggleClaw():
 def getNthCube(n):
      for p in prepositions[n]:
           route.goToPointStraight(None,p)
-     drive.driveRotateToAngle(preangles[n])
+     cp = getPosition()
+     
+     a = preangles[n]
+                                   
+     drive.driveRotateToAngle(a)
 
      wiggleClaw()
      
