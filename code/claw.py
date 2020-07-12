@@ -14,7 +14,7 @@ clawIsFinished() - True if the claw has finished
 waitOnClaw() - returns once the claw has finished moving
 """
 
-releasing_time = 1
+releasing_time = 1.5
 
 claw_lock = threading.Lock()
 
