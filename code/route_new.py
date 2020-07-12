@@ -73,15 +73,16 @@ def wiggleClaw():
 cnt = 0
 def getNthCube(n):
      global cnt
+     print("Hello")
      for p in prepositions[n]:
           route.goToPointStraight(None,p)
-     cp = getPosition()
+     #cp = getPosition()
      
      a = preangles[n]
-                                   
+     print("Rotating")
      drive.driveRotateToAngle(a)
-
-     if cnt >= 2:
+     print("Finished")
+     if cnt >= 1:
           wiggleClaw()
      
      orienting.approachCube()
