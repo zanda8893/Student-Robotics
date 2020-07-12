@@ -70,8 +70,9 @@ def wiggleClaw():
      lift.lowerLiftSync()
      claw.waitOnClaw()
      
-     
+cnt = 0
 def getNthCube(n):
+     global cnt
      for p in prepositions[n]:
           route.goToPointStraight(None,p)
      cp = getPosition()
@@ -80,7 +81,8 @@ def getNthCube(n):
                                    
      drive.driveRotateToAngle(a)
 
-     wiggleClaw()
+     if cnt >= 2:
+          wiggleClaw()
      
      orienting.approachCube()
      claw.grabClawSync()
@@ -89,6 +91,7 @@ def getNthCube(n):
           route.goToPointStraight(None,p)
      claw.openClawSync()
      drive.driveStraight(-40,2)
+     cnt += 1
      
 def getCube():
     route.goToPointStraight(None,pos)

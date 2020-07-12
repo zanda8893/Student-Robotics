@@ -134,6 +134,7 @@ def goToPointStraight(prev,nex,timeout=15):
                 print("Timeout2!")
                 driveStraightSync(-30,3)
                 pos_ts = R.time()
+                t0 = R.time()
             continue
         if init is None:
             init = cp[0]
