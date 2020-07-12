@@ -16,16 +16,17 @@ def initP():
     p1.y=0
     p2.x=0
     p2.y=0
-    
+"""
 while True:
     markers = R.see()
     #use the arena markers to calculate robot's x,y,angle
     x = position.findPosition(markers)
     print("Position: {0}".format(conversions.toSimCoords(x[0])))
     robot_x,robot_y,robot_a = x[0].x,x[0].y,x[1]
+    
     for m in markers:
-        if m.info.marker_type == MARKER_ARENA and m.info.code==6:
-            print("Arena marker: ",m.info.code,m.orientation.rot_y)
+        if m.info.marker_type == MARKER_ARENA:# and m.info.code==6:
+            #print("Arena marker: ",m.info.code,m.orientation.rot_y)
             continue
      
         #make cube, print cube
@@ -34,4 +35,11 @@ while True:
         #print(c.getRoutePts(Position(0,0),50))
         #p = conversions.toSimCoords(Position(c.x,c.y))
         #print("Code: {0} Position: {1} Angle: {2}".format(m.info.code,p,c.a))
+
+    R.sleep(1)
+"""
+
+
+while True:
+    print(getPresentCubes())
     R.sleep(1)

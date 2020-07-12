@@ -5,6 +5,7 @@ import deg
 from position import Position
 import position
 import conversions
+import drive
 
 class Cube():
     #From marker: marker,rx,ry,ra
@@ -32,25 +33,25 @@ class Cube():
 
         #self.a is the anticlockwise angle between the marker's normal
         #and the positive x-axis
-        print("\n\n--------------------")
+        #print("\n\n--------------------")
         d = marker.dist * 1000
-        print(f"Marker distance {d} orientation {marker.orientation.rot_y}")
-        self.a = (ra - marker.orientation.rot_y + 180) % 360
-        print(f"Marker angle {self.a}")
+        orient = position.wtf2(marker.rot_y,marker.orientation.rot_y)
+        #print(f"Marker distance {d} orientation {marker.orientation.rot_y}")
+        self.a = (ra - orient + 180) % 360
+        #print(f"Marker angle {self.a}")
         adiff = ra - marker.rot_y
-        print(f"Adiff {adiff}")
+        #print(f"Adiff {adiff}")
         self.x = rx + deg.sin(adiff) * d
         self.y = ry + deg.cos(adiff) * d
 
         p = conversions.toSimCoords(Position(self.x,self.y))
-        print("Before correction: {0} {1}".format(p,self.a))
+        #print("Before correction: {0} {1}".format(p,self.a))
         #apply corrections to x and y due to size of cube
-        #NOTE: technically it should be 100, but this seems to be an error
-        self.x -= deg.sin(self.a) * 100
-        self.y -= deg.cos(self.a) * 100
+        self.x -= deg.sin(self.a) * 180
+        self.y -= deg.cos(self.a) * 180
 
         self.__updateP()
-        print("After correction:",conversions.toSimCoords(self.p))
+        #print("After correction:",conversions.toSimCoords(self.p))
         self.color = marker.info.marker_type
         self.code = marker.info.code
         self.ts = R.time()
@@ -90,3 +91,50 @@ class Cube():
         p2 = self.p + Position(minDist+rdiff,0).rotate(a-da)
         return [p1,p2]
 
+def getNumCode(code):
+    order = [34,35,32,33]
+    if not code in order:
+        return -1
+    i = order.index(code)
+    i = (i - R.zone) % 4
+    nums = [0,1,3,2]
+    return nums[i]
+    
+expected_pts = [Position(1975,1975),Position(1975,3775),
+                Position(3775,1975),Position(3775,3775)]
+for i in range(len(expected_pts)):
+    expected_pts[i] = position.translateToZone(expected_pts[i])
+#NOTE: this returns the 'logical' cube numbers, which is
+#independent of zone. For zone 0, this is:
+#marker 34=0, marker 35=1, marker 33=2, marker 32=3
+def getPresentCubes():
+    cubes = [None,None,None,None]
+    markers = R.see()
+    cp = position.findPosition(markers)
+    if cp is None:
+        print("Cant find position")
+        return []
+    for m in markers:
+        if m.info.marker_type == MARKER_ARENA:
+            continue
+        c = Cube(m,cp[0].x,cp[0].y,cp[1])
+        n = getNumCode(c.code)
+        print(n,c.code)
+        if n < 0:
+            continue
+        cubes[n] = c
+        print("A",cubes)
+    drive.driveStraight(0)
+    print("Cubes:",cubes)
+    ret = []
+    for i in range(4):
+        if cubes[i] is None:
+            print("D")
+            continue
+        if cubes[i].p.dist(expected_pts[i]) < 600:
+            print("B")
+            ret.append(i)
+        else:
+            print("C",cubes[i].p,expected_pts[i])
+    return ret
+            
