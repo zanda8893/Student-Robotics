@@ -1,17 +1,26 @@
 #Main loop
+
 import  drive
-drive.driveRotateAngle(40)
-drive.acceleration(100)
-drive.driveStraightSync(100,1.5)
-#~~ = Yet to be implimented/written
-#Imports
+from robot_obj import R
 import lift, claw, position, route_new, route, robot_obj, dropping
 from arena import A
 from sr.robot import *
 
-print("Imports done")
+drive.driveRotateAngle(40)
+drive.acceleration(100)
+drive.driveStraight(100)
+R.sleep(1.5)
+drive.stopping()
 
 count = 0
+
+route_new.getNthCube(1)
+route_new.getNthCube(0)
+route_new.getNthCube(2)
+route_new.getNthCube(1)
+print("And on the seventh day...")
+exit()
+
 
 while True:
     #Start

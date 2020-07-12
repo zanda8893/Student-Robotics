@@ -30,6 +30,22 @@ pos3 = Position(700,1850)
 ah4 = 165
 pos4 = Position(3800,1000)
 
+#positions before approachCube
+prepositions = [[translateToZone(Position(1300,1975))],
+                [translateToZone(Position(1200,3750))],
+                [translateToZone(Position(3300,1975))]]
+#angles before approachCube
+preangles = [bearingToZone(0),bearingToZone(0),bearingToZone(0)]
+#angle to turn to after grabbing
+afterangles = [bearingToZone(0),bearingToZone(90),bearingToZone(-45)]
+#lists of points to get home
+homepositions = [[translateToZone(Position(1000,1400))],
+                 [translateToZone(Position(1100,2875)),
+                  translateToZone(Position(1200,1200))],
+                 [translateToZone(Position(3775,1000)),
+                  translateToZone(Position(800,1600))]]
+
+
 if robot_obj.R.zone != 0:
      pos = position.translateToZone(pos)
      a = position.bearingToZone(a)
@@ -42,24 +58,43 @@ if robot_obj.R.zone != 0:
      pos3 = position.translateToZone(pos3)
      pos4 = position.translateToZone(pos4)
 
+def wiggleClaw():
+     print("And breath in...")
+     lift.raiseLift()
+     claw.grabClawSync()
+     claw.openClaw()
+     print("...and breath out")
+     R.sleep(0.6)
+     lift.lowerLiftSync()
+     claw.waitOnClaw()
+     
+     
+def getNthCube(n):
+     for p in prepositions[n]:
+          route.goToPointStraight(None,p)
+     drive.driveRotateToAngle(preangles[n])
 
+     wiggleClaw()
+     
+     orienting.approachCube()
+     claw.grabClawSync()
+     drive.driveRotateToAngle(afterangles[n])
+     for p in homepositions[n]:
+          route.goToPointStraight(None,p)
+     claw.openClawSync()
+     drive.driveStraight(-40,2)
+     
 def getCube():
-    og_Rp = position.findPosition(robot_obj.R.see())
-    if og_Rp is None:
-         return False
-    else:
-        #print("Rotate")
-        #print(type(og_Rp[0]),type(pos))
-        route.goToPointStraight(og_Rp[0],pos)
-        drive.driveRotateAngle(90)
-        drive.driveRotateToAngle(a)
-        robot_obj.R.sleep(0.5)
-        route.goToPointStraight(og_Rp[0],pos+Position(0,750).rotate(-90*robot_obj.R.zone))
-        orienting.approachCube()
-        claw.grabClawSync()
-        drive.driveRotateToAngle(ah)
-        drive.driveStraightSync(40,3)
-        """
+    route.goToPointStraight(None,pos)
+    drive.driveRotateAngle(90)
+    drive.driveRotateToAngle(a)
+    robot_obj.R.sleep(0.5)
+    
+    orienting.approachCube()
+    claw.grabClawSync()
+    drive.driveRotateToAngle(ah)
+    drive.driveStraightSync(40,3)
+"""
         if robot_obj.R.ruggeduinos[0].digital_read(5) == False:
             print("Get cube failed")
             drive.driveStraightSync(-30,2)
@@ -73,13 +108,14 @@ def getCube2():
     #robot_obj.R.sleep(1)
     lift.raiseLiftSync()
     lift.lowerLiftSync()
-    route.goToPointStraight(None,translateToZone(Position(1435,3775)))
+    route.goToPointStraight(None,translateToZone(Position(1335,3775)))
     drive.driveRotateToAngle(position.bearingToZone(0))
     orienting.approachCube()
     claw.grabClawSync()
     drive.driveRotateToAngle(bearingToZone(180))
-    route.goToPointStraight(None,translateToZone(Position(1235,3775)))
-    drive.driveRotateToAngle(bearingToZone(250))
+    route.goToPointStraight(None,translateToZone(Position(1335,3775)))
+    print("A")
+    drive.driveRotateToAngle(bearingToZone(270))
     drive.driveStraightSync(40,5)
 
 def getCube3():
