@@ -114,7 +114,7 @@ def checkAngleSync(a,prev,nex):
         driveRotateToAngle(ta)
     driveStraight(drive_power)
 #0 for success
-def goToPointStraight(prev,nex,timeout=8):
+def goToPointStraight(prev,nex,timeout=15):
     #print("Going to point",nex)
     lastPt = prev
     init = prev
@@ -125,7 +125,7 @@ def goToPointStraight(prev,nex,timeout=8):
             print("Timeout1!")
             driveStraightSync(-30,3)
             return 1
-        t0 = R.time()
+        #t0 = R.time()
         m = R.see()
         #A.addMarkers(m)
         cp = position.findPosition(m)

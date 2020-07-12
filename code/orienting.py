@@ -140,7 +140,7 @@ def checkColor(color):
 
 #true on success
 def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
-    min_dist = 100
+    min_dist = 80
     t0 = R.time()
     if not checkColor(color):
         return False
@@ -160,11 +160,11 @@ def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
             drive.driveStraight(20)
         elif leftd is None:
             print("Rotating CW")
-            drive.drive(20,5,-1)
+            drive.drive(20,10,-1)
             m = rightd
         elif rightd is None:
             print("Rotating CCW")
-            drive.drive(5,20,-1)
+            drive.drive(10,20,-1)
             m = leftd
         else:
             print("Straight slowly")
