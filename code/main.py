@@ -1,44 +1,46 @@
 #Main loop
-
+import  drive
+drive.driveRotateAngle(40)
+drive.acceleration(100)
+drive.driveStraightSync(100,1.5)
 #~~ = Yet to be implimented/written
-
 #Imports
-import lift, claw, position, route_new, route, robot_obj,dropping, drive
+import lift, claw, position, route_new, route, robot_obj, dropping
 from arena import A
 from sr.robot import *
+
+print("Imports done")
 
 count = 0
 
 while True:
     #Start
     #Look for markers
-    count = count + 1
+    count = count +1
     if count == 1:
-        #robot_obj.R.sleep(2)
         markers = robot_obj.R.see()
         print("See")
         #Find robot position
         #Rp = Robot coordinates, Ra = Robot angle
-        print("pos",markers)
+        print("pos")
         start_Rp,start_Ra = position.findPosition(markers)
         #Find nearest cube
         #colour either MARKER_TOKEN_GOLD or MARKER_TOKEN_SILVER
         #print("get near")
-        print("test2")
-        cube = A.getNearest(start_Rp,MARKER_TOKEN_GOLD)
-        print(cube,"test")
-        print("test1")
-        route_new.getCube(cube)
-        robot_obj.R.sleep(1)
+        #print("test2")
+        #cube = A.getNearest(start_Rp,MARKER_TOKEN_GOLD)
+        #print(cube,"test")
+        #print("test1")
+        route_new.getCube2()
+        robot_obj.R.sleep(0.5)
         claw.openClaw()
         drive.driveStraightSync(-40,3)
-        drive.driveRotateToAngle(0)
-        A.removeCube(cube)
+        #A.removeCube(cube)
 
         print("Done")
         #End
     elif count== 2:
-        route_new.getCube2()
+        route_new.getCube()
         claw.openClaw()
         drive.driveStraightSync(-40,3)
         drive.driveRotateToAngle(0)
