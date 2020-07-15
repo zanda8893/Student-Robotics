@@ -102,39 +102,21 @@ def getNumCode(code):
     
 expected_pts = [Position(1975,1975),Position(1975,3775),
                 Position(3775,1975),Position(3775,3775)]
-for i in range(len(expected_pts)):
-    expected_pts[i] = position.translateToZone(expected_pts[i])
-#NOTE: this returns the 'logical' cube numbers, which is
-#independent of zone. For zone 0, this is:
-#marker 34=0, marker 35=1, marker 33=2, marker 32=3
-def getPresentCubes():
-    cubes = [None,None,None,None]
-    markers = R.see()
-    cp = position.findPosition(markers)
-    if cp is None:
-        print("Cant find position")
-        return []
-    for m in markers:
+
+#Takes a relative cube n and determines if it is present
+#If the cube is present, 1 is returned
+#If the cube is visible but in the wrong place, -1 is returned
+#If the cube is not visible, 0 is returned
+#It is the caller's responsibility to orient the robot so it
+#should be able to see the cube
+def nthCubePositionCorrect(code,pos):
+    mks = R.see()
+    for m in mks:
         if m.info.marker_type == MARKER_ARENA:
             continue
-        c = Cube(m,cp[0].x,cp[0].y,cp[1])
-        n = getNumCode(c.code)
-        print(n,c.code)
-        if n < 0:
-            continue
-        cubes[n] = c
-        print("A",cubes)
-    drive.driveStraight(0)
-    print("Cubes:",cubes)
-    ret = []
-    for i in range(4):
-        if cubes[i] is None:
-            print("D")
-            continue
-        if cubes[i].p.dist(expected_pts[i]) < 600:
-            print("B")
-            ret.append(i)
-        else:
-            print("C",cubes[i].p,expected_pts[i])
-    return ret
-            
+        c = Cube(m)
+        if c.code == code:
+            if c.p.dist(pos) < 120:
+                return 1
+            return -1
+    return 0
