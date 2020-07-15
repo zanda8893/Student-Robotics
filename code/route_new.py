@@ -48,6 +48,7 @@ cubepositions = [translateToZone(Position(1975,1975)),
                  translateToZone(Position(1975,3775)),
                  translateToZone(Position(3775,1975))]
 
+
 if robot_obj.R.zone != 0:
      pos = position.translateToZone(pos)
      a = position.bearingToZone(a)
