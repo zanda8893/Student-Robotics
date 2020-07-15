@@ -35,19 +35,19 @@ pos4 = Position(3800,1000)
 ##                [translateToZone(Position(1200,3750))],
 ##                [translateToZone(Position(3300,1975))]]
 
-prepositions = [[translateToZone(Position(1300,1975))],
-               [translateToZone(Position(5275,1475))],
-               [translateToZone(Position(475,3775))],
-               [translateToZone(Position(1200,3750))],
-               [translateToZone(Position(5275,1125))],
-               [translateToZone(Position(3325,1075))],
-               [translateToZone(Position(3300,1975))],
-               [translateToZone(Position(1125,1075))],
-               [translateToZone(Position(1125,2375))],
-               [translateToZone(Position(1955,2875))],
-               [translateToZone(Position(1375,475))],
-               [translateToZone(Position(2825,1975))],
-               [translateToZone(Position(1875,475))]]
+prepositions = [[translateToZone(Position(1300,1975)),
+               translateToZone(Position(5275,1475))],
+               [translateToZone(Position(475,3775)),
+               translateToZone(Position(1200,3750)),
+               translateToZone(Position(5275,1125))],
+               [translateToZone(Position(3325,1075)),
+               translateToZone(Position(3300,1975)),
+               translateToZone(Position(1125,1075))],
+               [translateToZone(Position(1125,2375)),
+               translateToZone(Position(1955,2875)),
+               translateToZone(Position(1375,475))],
+               [translateToZone(Position(2825,1975)),
+               translateToZone(Position(1875,475))]]
 #angles before approachCube
 preangles = [bearingToZone(0),bearingToZone(270),bearingToZone(0),
             bearingToZone(0),bearingToZone(270),bearingToZone(90),
