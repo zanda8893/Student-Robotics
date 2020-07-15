@@ -55,7 +55,12 @@ preangles = [bearingToZone(0),bearingToZone(270),bearingToZone(0),
             bearingToZone(0),bearingToZone(180),bearingToZone(90),
             bearingToZone(180)]
 #angle to turn to after grabbing
-afterangles = [bearingToZone(0),bearingToZone(90),bearingToZone(-45)]
+##afterangles = [bearingToZone(0),bearingToZone(90),bearingToZone(-45)]
+afterangles = [bearingToZone(270),bearingToZone(90),bearingToZone(0),
+            bearingToZone(180),bearingToZone(0),bearingToZone(90),
+            bearingToZone(270),bearingToZone(90),bearingToZone(0),
+            bearingToZone(270),bearingToZone(0),bearingToZone(180),
+            bearingToZone(90)]
 #lists of points to get home
 homepositions = [[translateToZone(Position(1000,1400))],
                  [translateToZone(Position(1100,2875)),
