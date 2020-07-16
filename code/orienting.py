@@ -33,7 +33,7 @@ def getPre(curr,pos,ang):
             curr = position.translateToZone(Position(0,0))
         else:
             curr = cp[0]
-            
+
     poss.sort(key=lambda pt:pt.dist(curr))
     return poss[0]
 
@@ -87,6 +87,47 @@ def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
             print("Stopping")
             drive.driveStraight(0)
             return True
-        
+
 
     return False
+
+def approachCubeCam(timeout=5):#
+    cube = None
+    closest = 1500
+    foundClose = False
+    centrePolarMatch = False
+    print("approachCubeCam")
+    t0 = R.time()
+    while R.time() < t0 + timeout:
+        markers = R.see()
+        for m in markers:
+            if foundClose == False:
+                print("Check Marker")
+                if m.dist * 1000 < closest and m.info.marker_type ==MARKER_TOKEN_GOLD:
+                    print("Closest found")
+                    closest = m.dist * 1000
+                    code = m.info.code
+                    foundClose = True
+                    cube = m
+                else:
+                    print("Marker doesn't fit requirements. Distance:",m.dist * 1000,"Type:",m.info.marker_type)
+            elif m.info.code == code:
+                cube = m
+        if cube.centre.polar.rot_y > -10 and cube.centre.polar.rot_y < 10:
+            centrePolarMatch == True
+        elif cube.centre.polar.rot_y > 0:
+            print("Right",cube.centre.polar.rot_y)
+            drive.drive(20,10,-1)
+        elif cube.centre.polar.rot_y < 0:
+            print("Left",cube.centre.polar.rot_y)
+            drive.drive(10,20,-1)
+        if centrePolarMatch == True:
+            if cube.orientation.rot_y > -3 and cube.orientation.rot_y < 3:
+                print("Stright")
+                drive.driveStraight(20)
+            elif cube.orientation.rot_y > 0:
+                print("Right")
+                drive.drive(20,10,-1)
+            elif cube.orientation.rot_y < 0:
+                print("Left")
+                drive.drive(10,20,-1)
