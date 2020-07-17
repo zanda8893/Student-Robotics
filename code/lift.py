@@ -14,7 +14,8 @@ liftIsFinished() - True if the lift has finished moving, False otherwise
 waitOnLift() - wait until the lift has finished moving
 """
 
-lifting_time = 0.1
+lifting_time = 0.6
+lowering_time = 0.4
 
 lift_lock = threading.Lock()
 
@@ -32,8 +33,10 @@ def raiseLiftSync():
         lift_lock.release()
         return
     lift_is_raised = True
-    setLift(-100)
+    setLift(-10)
     robot_obj.R.sleep(lifting_time)
+    setLift(2)
+    robot_obj.R.sleep(0.06)
     setLift(0)
     lift_lock.release()
 
@@ -50,8 +53,10 @@ def lowerLiftSync():
         lift_lock.release()
         return
     lift_is_raised = False
-    setLift(100)
-    robot_obj.R.sleep(lifting_time)
+    setLift(10)
+    robot_obj.R.sleep(lowering_time)
+    setLift(-2)
+    robot_obj.R.sleep(0.08)
     setLift(0)
     lift_lock.release()
 

@@ -105,9 +105,17 @@ expected_pts = [Position(1975,1975),Position(1975,3775),
 
 
 codes1 = [34,35,32,33]
-codes2 = []
-codes = [codes1[R.zone],codes1[(R.zone+1)%4],
-         codes1[(R.zone+3)%4]]
+codes2 = [38,39,37,36]
+codes = [codes1[R.zone],
+         codes1[(R.zone+1)%4],
+         codes1[(R.zone+3)%4],
+         codes2[R.zone],
+         codes2[(R.zone+3)%4]]
+
+def getNthCode(n):
+    global codes
+    return codes[n]
+
 #Takes a relative cube n and determines if it is present
 #If the cube is present, 1 is returned
 #If the cube is visible but in the wrong place, -1 is returned
@@ -115,8 +123,9 @@ codes = [codes1[R.zone],codes1[(R.zone+1)%4],
 #It is the caller's responsibility to orient the robot so it
 #should be able to see the cube
 def nthCubePositionCorrect(n,pos):
+    global codes
     mks = R.see()
-    code = codes[n]
+    code = getNthCode(n)
     for m in mks:
         if m.info.marker_type == MARKER_ARENA:
             continue

@@ -137,13 +137,15 @@ def rotateFromDiff(diff):
     t = math.fabs(diff) * s_per_deg
     driveRotateSync(rotate_speed,t)
 
-def driveRotateToAngle(ang):
+def driveRotateToAngle(ang,hint=None):
     max_dev = 1
     m = robot_obj.R.see()
     cp = position.findPosition(m)
     if cp is None:
         print("Cant scan")
-        return False
+        if hint is None:
+            return False
+        cp = (None,hint)
     diff = position.getAngleDiff(ang,cp[1])
     print(f"Angle: {cp[1]} Diff: {diff}")
     while math.fabs(diff) > max_dev:

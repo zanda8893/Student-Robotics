@@ -8,6 +8,7 @@ import ultrasound
 import drive
 from robot_obj import R
 from sr.robot import *
+import cube
 
 position_distance = 150
 preposition_distance = 400 #distance to travel from pre to pos
@@ -91,43 +92,48 @@ def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
 
     return False
 
-def approachCubeCam(timeout=5):#
-    cube = None
-    closest = 1500
-    foundClose = False
-    centrePolarMatch = False
-    print("approachCubeCam")
-    t0 = R.time()
+def lineUpToCubeCam(code,timeout=5,t0=R.time()):
     while R.time() < t0 + timeout:
         markers = R.see()
         for m in markers:
-            if foundClose == False:
-                print("Check Marker")
-                if m.dist * 1000 < closest and m.info.marker_type ==MARKER_TOKEN_GOLD:
-                    print("Closest found")
-                    closest = m.dist * 1000
-                    code = m.info.code
-                    foundClose = True
-                    cube = m
-                else:
-                    print("Marker doesn't fit requirements. Distance:",m.dist * 1000,"Type:",m.info.marker_type)
-            elif m.info.code == code:
-                cube = m
-        if cube.centre.polar.rot_y > -10 and cube.centre.polar.rot_y < 10:
-            centrePolarMatch == True
-        elif cube.centre.polar.rot_y > 0:
-            print("Right",cube.centre.polar.rot_y)
-            drive.drive(20,10,-1)
-        elif cube.centre.polar.rot_y < 0:
-            print("Left",cube.centre.polar.rot_y)
-            drive.drive(10,20,-1)
-        if centrePolarMatch == True:
-            if cube.orientation.rot_y > -3 and cube.orientation.rot_y < 3:
-                print("Stright")
-                drive.driveStraight(20)
-            elif cube.orientation.rot_y > 0:
-                print("Right")
-                drive.drive(20,10,-1)
-            elif cube.orientation.rot_y < 0:
-                print("Left")
-                drive.drive(10,20,-1)
+            if m.info.code == code:
+                mk = m
+                break
+        if mk is None:
+            return False
+
+def approachCubeCam(code,timeout=10):
+    min_dist = 140
+    s_per_deg = 0.2
+    mk = None
+    print("approachCubeCam")
+    t0 = R.time()
+
+    #phase 1: get in front of cube
+    while R.time() < t0 + timeout:
+        markers = R.see()
+        for m in markers:
+            if m.info.code == code:
+                mk = m
+                break
+        if mk is None:
+            return False
+        print("Dist:",mk.dist*1000)
+        left = ultrasound.getDistance(0)
+        right = ultrasound.getDistance(1)
+        if not left is None and not right is None:
+            if min(left,right) < 80:
+                drive.driveStraight(0)
+                return True
+        if mk.rot_y > -0.5 and mk.rot_y < 0.5:
+            print("Straight")
+            drive.driveStraight(20)
+        elif mk.rot_y > 0:
+            print("Right")
+            drive.drive(15,10,-1)
+        elif mk.rot_y < 0:
+            print("Left")
+            drive.drive(10,15,-1)
+
+    print("Timed out!")
+    return False

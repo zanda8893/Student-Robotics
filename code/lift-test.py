@@ -3,11 +3,12 @@ import robot_obj
 
 #Done tests
 
-print("Started at {0}".format(robot_obj.R.time()))
-lift.raiseLift()
-print(lift.liftIsFinished())
-lift.waitOnLift()
-print("Finished at {0}".format(robot_obj.R.time()))
-lift.lowerLift()
-print(lift.liftIsFinished())
-lift.waitOnLift()
+while True:
+    print("Lifting")
+    lift.raiseLiftSync()
+    print("Done")
+    robot_obj.R.sleep(2)
+    print("Lowering")
+    lift.lowerLiftSync()
+    print("Done")
+    robot_obj.R.sleep(2)
