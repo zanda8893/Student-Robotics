@@ -115,7 +115,6 @@ def approachCubeCam(code,timeout=10):
     print("approachCubeCam")
     t0 = R.time()
 
-    #phase 1: get in front of cube
     while R.time() < t0 + timeout:
         markers = R.see()
         for m in markers:
@@ -130,7 +129,8 @@ def approachCubeCam(code,timeout=10):
         print("US",left,right)
         print("Switch",R.ruggeduinos[0].digital_read(2))
         if not left is None and not right is None:
-            if min(left,right) < 60 or mk.dist < 0.145:
+            if min(left,right) < 60 or mk.dist < 0.145 or R.ruggeduinos[0].digital_read(2):
+                #R.sleep(0.5)
                 drive.driveStraight(0)
                 return True
         if mk.rot_y > -0.5 and mk.rot_y < 0.5:

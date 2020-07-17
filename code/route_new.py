@@ -11,10 +11,10 @@ prepositions = [[translateToZone(Position(1300,1975))],
                translateToZone(Position(1350,3775))],
                [translateToZone(Position(3775,550)),   
                 translateToZone(Position(3775,1350))],
-               [translateToZone(Position(1700,1000)),  
+               [translateToZone(Position(1700,1300)),  
                 translateToZone(Position(1700,2875)),
                 translateToZone(Position(1300,2875))],
-               [translateToZone(Position(1000,1700)),  
+               [translateToZone(Position(1300,1700)),  
                 translateToZone(Position(2875,1700)),
                 translateToZone(Position(2875,1300))]]
 #angles before approachCube
@@ -124,7 +124,8 @@ def getNthCubePlatform(n):
      drive.driveStraightSync(-30,1.5)
      lift.lowerLiftSync()
      claw.openClawSync()
-     lift.lowerLiftSync()
+     drive.driveStraightSync(20,1)
+     #lift.lowerLiftSync()
      claw.grabClawSync()
      """
      if grabbed and not R.ruggeduinos[0].digital_read(5):
