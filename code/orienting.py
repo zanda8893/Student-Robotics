@@ -40,6 +40,14 @@ def getPre(curr,pos,ang):
 
 def checkColor(color):
     markers = R.see()
+    markers.sort(key=lambda m:m.dist)
+    if len(markers) == 0:
+        return True #assume it is correct if no markers are visible
+    if markers[0].info.marker_type != color:
+        print("Ugh! A silver! I didn't ask for a _silver_!!!")
+        print(markers[0].info.code)
+        return False
+    """
     for m in markers:
         if m.dist * 1000 < 300 and not color is None:
             if m.info.marker_type == MARKER_ARENA:
@@ -49,6 +57,7 @@ def checkColor(color):
             if m.info.marker_type != color:
                 print(f"Exiting {m.dist} {m.info.marker_type}")
                 return False
+    """
     return True
 
 #true on success
@@ -60,9 +69,6 @@ def approachCube(color=MARKER_TOKEN_GOLD,timeout=5):
     i=1
     while R.time() < t0 + timeout:
         i += 1
-        if not checkColor(color):
-            drive.driveStraightSync(-20,2)
-            return False
         leftd = ultrasound.getDistance(0)
         rightd = ultrasound.getDistance(1)
         print(f"Left {leftd} Right {rightd}")
@@ -121,8 +127,10 @@ def approachCubeCam(code,timeout=10):
         print("Dist:",mk.dist*1000)
         left = ultrasound.getDistance(0)
         right = ultrasound.getDistance(1)
+        print("US",left,right)
+        print("Switch",R.ruggeduinos[0].digital_read(2))
         if not left is None and not right is None:
-            if min(left,right) < 80:
+            if min(left,right) < 60 or mk.dist < 0.145:
                 drive.driveStraight(0)
                 return True
         if mk.rot_y > -0.5 and mk.rot_y < 0.5:

@@ -23,7 +23,6 @@ already being followed will override the current route
 """
 
 drive_power = 40
-start_time = 0
 
 def offRoute(p,prev,nex,route=None):
     max_dev = 80
@@ -47,19 +46,12 @@ def arrivedPt(p,prev,nex):
     return False
 
 def checkAngleSync(a,prev,nex,p=drive_power):
-    global start_time
     max_angle_dev = 10
     ta = position.anglePts(prev,nex)
     diff = position.getAngleDiff(ta,a)
     if math.fabs(diff) > max_angle_dev:
         driveRotateToAngle(ta)
-        start_time = R.time()
-    if start_time - R.time() > 0.4:
-        driveStraight(60)
-    elif start_time - R.time() > 0.2:
-        driveStraight(40)
-    else:
-        driveStraight(20)
+    driveStraight(p)
         
 #0 for success
 def goToPointStraight(prev,nex,timeout=15,p=drive_power):

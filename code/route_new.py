@@ -8,9 +8,9 @@ Nearest cube, far left, far right, mid left, mid right
 """
 prepositions = [[translateToZone(Position(1300,1975))],
                [translateToZone(Position(550,3775)),   
-               translateToZone(Position(1200,3775))],
+               translateToZone(Position(1350,3775))],
                [translateToZone(Position(3775,550)),   
-                translateToZone(Position(3775,1200))],
+                translateToZone(Position(3775,1350))],
                [translateToZone(Position(1700,1000)),  
                 translateToZone(Position(1700,2875)),
                 translateToZone(Position(1300,2875))],
@@ -41,15 +41,15 @@ afterangles = [bearingToZone(0),
                -90,
                90]
 #lists of points to get home
-homepositions = [[translateToZone(Position(1200,1200))],
+homepositions = [[translateToZone(Position(1500,1500))],
                  [translateToZone(Position(795,3145)),
-                  translateToZone(Position(1200,1200))],
+                  translateToZone(Position(1500,1500))],
                  [translateToZone(Position(3145,795)),
-                  translateToZone(Position(1200,1200))],
+                  translateToZone(Position(1500,1500))],
                  [translateToZone(Position(1975,1975)),
-                  translateToZone(Position(1200,1200))],
+                  translateToZone(Position(1500,1500))],
                  [translateToZone(Position(1975,1975)),
-                  translateToZone(Position(1200,1200))]]
+                  translateToZone(Position(1500,1500))]]
 cubepositions = [translateToZone(Position(1975,1975)),
                  translateToZone(Position(1975,3775)),
                  translateToZone(Position(3775,1975)),
@@ -90,6 +90,7 @@ def getNthCubeGround(n):
      res = goToCube(n)
      if not res:
           returnHome(n,False)
+          return False
           
      if cnt >= 1:
           wiggleClaw()
@@ -97,6 +98,7 @@ def getNthCubeGround(n):
      res = orienting.approachCube()
      if not res:
           returnHome(n,False)
+          return False
           
      claw.grabClawSync()
      drive.driveRotateToAngle(afterangles[n])
@@ -107,6 +109,7 @@ def getNthCubePlatform(n):
      res = goToCube(n)
      if not res:
           returnHome(n,False)
+          return False
 
      claw.openClawSync()
      lift.raiseLiftSync()
@@ -114,11 +117,27 @@ def getNthCubePlatform(n):
      res = orienting.approachCubeCam(cube.getNthCode(n))
      if not res:
           returnHome(n,False)
-          
+          return False
+
      claw.grabClawSync()
+     #grabbed = R.ruggeduinos[0].digital_read
      drive.driveStraightSync(-30,1.5)
      lift.lowerLiftSync()
-     
+     claw.openClawSync()
+     lift.lowerLiftSync()
+     claw.grabClawSync()
+     """
+     if grabbed and not R.ruggeduinos[0].digital_read(5):
+          claw.openClawSync()
+          drive.driveStraightSync(-30,1)
+          lift.lowerLiftSync()
+          
+          res = orienting.approachCube()
+          if not res:
+               returnHome(n,False)
+               return False
+          drive.driveStraightSync(-30,1)
+     """
      drive.driveRotateAngle(afterangles[n])
      returnHome(n)
 

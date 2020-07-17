@@ -36,7 +36,7 @@ def raiseLiftSync():
     setLift(-10)
     robot_obj.R.sleep(lifting_time)
     setLift(2)
-    robot_obj.R.sleep(0.06)
+    robot_obj.R.sleep(0.1)
     setLift(0)
     lift_lock.release()
 
