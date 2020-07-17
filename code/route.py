@@ -23,6 +23,7 @@ already being followed will override the current route
 """
 
 drive_power = 40
+start_time = 0
 
 def offRoute(p,prev,nex,route=None):
     max_dev = 80
@@ -46,17 +47,23 @@ def arrivedPt(p,prev,nex):
     return False
 
 def checkAngleSync(a,prev,nex,p=drive_power):
-    global drive_power
+    global start_time
     max_angle_dev = 10
     ta = position.anglePts(prev,nex)
     diff = position.getAngleDiff(ta,a)
     if math.fabs(diff) > max_angle_dev:
         driveRotateToAngle(ta)
-    driveStraight(p)
-    
+        start_time = R.time()
+    if start_time - R.time() > 0.4:
+        driveStraight(60)
+    elif start_time - R.time() > 0.2:
+        driveStraight(40)
+    else:
+        driveStraight(20)
+        
 #0 for success
 def goToPointStraight(prev,nex,timeout=15,p=drive_power):
-    #print("Going to point",nex)
+    
     lastPt = prev
     init = prev
     t0 = R.time()
@@ -67,9 +74,7 @@ def goToPointStraight(prev,nex,timeout=15,p=drive_power):
             print("Timeout1!")
             driveStraightSync(-30,2)
             return 1
-        #t0 = R.time()
         m = R.see()
-        #A.addMarkers(m)
         cp = position.findPosition(m)
         if cp is None:
             if R.time() > pos_ts + 3:
@@ -83,16 +88,20 @@ def goToPointStraight(prev,nex,timeout=15,p=drive_power):
                 t0 += 4
                 to_cnt += 1
             continue
+        
         if init is None:
             init = cp[0]
-        #print("Current position {0}".format(cp))
+            
         if arrivedPt(cp[0],init,nex):
             driveStraight(0)
             return 0
+        
         if cp[0].dist(nex) > 500 or lastPt is None:
             lastPt = cp[0]
+            
         if lastPt is None:
             continue
+        
         checkAngleSync(cp[1],lastPt,nex,p)
         pos_ts = R.time()
         

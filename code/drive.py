@@ -29,7 +29,7 @@ stop_cond = threading.Condition(stop_lock)
 killed = False
 
 #sets gradual acceleration. with p being the target power
-def acceleration(p):
+def accelerate(p):
     #c = current power. 0 is used as a temp
     c = robot_obj.R.motors[0].m0.power
     #c=0
@@ -38,7 +38,7 @@ def acceleration(p):
         c = min(c,p)
         driveStraightSync(c,0.1)
 
-def stopping():
+def deccelerate():
     #c = current power. 100 is used as a temp
     c = robot_obj.R.motors[0].m0.power
     #print(c)
@@ -46,7 +46,7 @@ def stopping():
     while c > 0:
         c -= 20
         driveStraightSync(max(c,0),0.1)
-
+        
 #set drive - do not use from outside this file
 def setDrive(l,r):
     #print("Setting drive to {0},{1} at {2}".format(l,r,robot_obj.R.time()))
