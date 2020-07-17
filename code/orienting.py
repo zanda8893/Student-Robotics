@@ -8,7 +8,6 @@ import ultrasound
 import drive
 from robot_obj import R
 from sr.robot import *
-import cube
 
 position_distance = 150
 preposition_distance = 400 #distance to travel from pre to pos

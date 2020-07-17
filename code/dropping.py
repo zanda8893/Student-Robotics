@@ -1,8 +1,7 @@
-from conversions import *
-from robot_obj import R
 import drive,claw
 from position import *
 
+"""
 #number of spaces in previous list already used up
 num_used_spaces = 0
 
@@ -34,6 +33,7 @@ def locationForCube():
 def placeCube():
     global num_used_spaces
     num_used_spaces += 1
+"""
 
 def dropCube():
     drive.driveRotateToAngle(bearingToZone(225))

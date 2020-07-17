@@ -1,5 +1,5 @@
-import drive, robot_obj, conversions, orienting
-import position, claw, route, lift,cube,dropping
+import drive, robot_obj, orienting
+import claw, route, lift,cube,dropping
 from position import *
 
 """
@@ -120,7 +120,10 @@ def getNthCubePlatform(n):
           return False
 
      claw.grabClawSync()
-     #grabbed = R.ruggeduinos[0].digital_read
+     grabbed = R.ruggeduinos[0].digital_read(5)
+     if not grabbed:
+          returnHome(n,False)
+          return False
      drive.driveStraightSync(-30,1.5)
      lift.lowerLiftSync()
      claw.openClawSync()

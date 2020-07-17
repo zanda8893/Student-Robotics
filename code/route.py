@@ -1,8 +1,5 @@
 import position
 from position import Position
-import arena
-from arena import A
-from tree import Tree
 import threading
 from drive import *
 from robot_obj import R
@@ -22,7 +19,7 @@ Note: calling goToPoint() or goToPointSync() while a route is
 already being followed will override the current route
 """
 
-drive_power = 40
+drive_power = 50
 
 def offRoute(p,prev,nex,route=None):
     max_dev = 80
