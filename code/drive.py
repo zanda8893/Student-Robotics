@@ -144,6 +144,7 @@ def driveRotateToAngle(ang,hint=None):
     if cp is None:
         print("Cant scan")
         if hint is None:
+            print("Hint: ",hint)
             return False
         cp = (None,hint)
     diff = position.getAngleDiff(ang,cp[1])

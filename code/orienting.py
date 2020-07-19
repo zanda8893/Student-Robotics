@@ -35,7 +35,17 @@ def getPre(curr,pos,ang):
             curr = cp[0]
 
     poss.sort(key=lambda pt:pt.dist(curr))
-    return poss[0]
+    p = poss[0]
+    if p.x < 100:
+        p.x = 100
+    if p.y < 100:
+        p.y = 100
+    if p.x > 5650:
+        p.x = 5650
+    if p.y > 5650:
+        p.y = 5650
+        
+    return p
 
 def checkColor(color):
     markers = R.see()

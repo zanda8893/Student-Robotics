@@ -56,6 +56,7 @@ cubepositions = [translateToZone(Position(1975,1975)),
                  translateToZone(Position(2455,2875)),
                  translateToZone(Position(2875,2455))]
 
+cubes_retrieved = [False,False,False,False,False]
 
 def wiggleClaw():
      print("And breath in...")
@@ -71,10 +72,36 @@ def goToCube(n):
      res = False
      for p in prepositions[n]:
           res = route.goToPointStraight(None,p)
-     if res > 0:
-          print("goToCube failed!")
-          return False
+          if res > 0:
+               print("goToCube failed!")
+               return False
+
      drive.driveRotateToAngle(preangles[n],anglehint[n])
+     
+     mks = R.see()
+     p = findPosition(mks)
+     pre,c = None,None
+     for mk in mks:
+          if mk.code == cube.getNthCode(n):
+               c = Cube(mk)
+               pre = orienting.getPre(p,c.p,c.a)
+               break
+     if pre is None or c is None:
+          return False
+
+     
+     return True
+
+def goToCubePlat(n):
+     res = False
+     for p in prepositions[n]:
+          res = route.goToPointStraight(None,p)
+          if res > 0:
+               print("goToCube failed!")
+               return False
+
+     drive.driveRotateToAngle(preangles[n],anglehint[n])
+
      return True
 
 def returnHome(n,success=True):
@@ -151,3 +178,43 @@ def getNthCube(n):
           getNthCubePlatform(n)
      else:
           getNthCubeGround(n)
+
+def selectCube():
+     #get current position
+     cp = position.getPosition()
+     if cp is None:
+          for i in range(5):
+               if not cubes_retrieved[i]:
+                    return i
+          return None
+     chances = [0.9,0.8,0.8,0.5,0.5] #probability of being successful
+     ang_stat = 0
+     for i in (0,1,3,2,4):
+          #rotate to position
+          if i == 0:
+               drive.driveRotateToAngle(bearingToZone(45),bearingToZone(0))
+          if i == 1:
+               drive.driveRotateToAngle(bearingToZone(70),bearingToZone(45))
+          if i == 2:
+               drive.driveRotateToAngle(bearingToZone(20),bearingToZone(70))
+
+          #ignore retrieved cubes
+          if cubes_retrieved[i]:
+               chances[i] = 0
+               continue
+          
+          x,d = cube.nthCubePositionCorrect(i,cubepositions[i])
+          if x == 0:
+               chances[i] *= 0.5
+          if x == -1:
+               chances[i] /= (1 + d*0.0008)
+
+     #get biggest chance
+     high = 0
+     for i in range(5):
+          if chances[i] > chances[high]:
+               high = i
+
+     return i
+
+

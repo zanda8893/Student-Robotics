@@ -132,6 +132,6 @@ def nthCubePositionCorrect(n,pos):
         c = Cube(m)
         if c.code == code:
             if c.p.dist(pos) < 120:
-                return 1
-            return -1
-    return 0
+                return 1,c.p.dist(pos)
+            return -1,c.p.dist(pos)
+    return 0,0
