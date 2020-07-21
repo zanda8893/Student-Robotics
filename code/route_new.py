@@ -1,20 +1,22 @@
 import drive, robot_obj, orienting
 import claw, route, lift,cube,dropping
 from position import *
+from cube import Cube
+import conversions
 
 """
 Order:
 Nearest cube, far left, far right, mid left, mid right
 """
 prepositions = [[translateToZone(Position(1300,1975))],
-               [translateToZone(Position(550,3775)),   
+               [translateToZone(Position(550,3775)),
                translateToZone(Position(1350,3775))],
-               [translateToZone(Position(3775,550)),   
+               [translateToZone(Position(3775,550)),
                 translateToZone(Position(3775,1350))],
-               [translateToZone(Position(1700,1300)),  
+               [translateToZone(Position(1700,1300)),
                 translateToZone(Position(1700,2875)),
                 translateToZone(Position(1300,2875))],
-               [translateToZone(Position(1300,1700)),  
+               [translateToZone(Position(1300,1700)),
                 translateToZone(Position(2875,1700)),
                 translateToZone(Position(2875,1300))]]
 #angles before approachCube
@@ -29,9 +31,9 @@ preangles = [bearingToZone(0),
 #arriving to the preposition
 anglehint = [bearingToZone(45),
              bearingToZone(0),
-             bearingToZone(270),
+             bearingToZone(90),
              bearingToZone(0),
-             bearingToZone(270)
+             bearingToZone(90)
              ]
 #angle to turn to after grabbing
 #for platform cubes: reverses first, rotates _by_ angle not _to_ angle
@@ -68,28 +70,37 @@ def wiggleClaw():
      lift.lowerLiftSync()
      claw.waitOnClaw()
 
-def goToCube(n):
+
+
+def goToCube(n,timeout=45):
+     t0 = R.time()
      res = False
      for p in prepositions[n]:
           res = route.goToPointStraight(None,p)
           if res > 0:
                print("goToCube failed!")
+               route.goToPointStraight(None,
+                                       translateToZone(Position(1500,1500)))
                return False
-
+                                       
      drive.driveRotateToAngle(preangles[n],anglehint[n])
-     
+
      mks = R.see()
      p = findPosition(mks)
+     if p is None:
+          p = (prepositions[n][-1],anglehint[n])
+          
      pre,c = None,None
      for mk in mks:
-          if mk.code == cube.getNthCode(n):
-               c = Cube(mk)
-               pre = orienting.getPre(p,c.p,c.a)
+          if mk.info.code == cube.getNthCode(n):
+               c = Cube(mk,p[0].x,p[0].y,p[1])
+               pre = orienting.getPre(p[0],c.p,c.a)
                break
      if pre is None or c is None:
           return False
+     presim = conversions.toSimCoords(pre)
+     print(f"Cube: {c}  Pre: {presim}")
 
-     
      return True
 
 def goToCubePlat(n):
@@ -109,7 +120,7 @@ def returnHome(n,success=True):
           route.goToPointStraight(None,p)
      if success:
           dropping.dropCube()
-     
+
 cnt = 0
 def getNthCubeGround(n):
      global cnt
@@ -118,7 +129,7 @@ def getNthCubeGround(n):
      if not res:
           returnHome(n,False)
           return False
-          
+
      if cnt >= 1:
           wiggleClaw()
 
@@ -126,12 +137,12 @@ def getNthCubeGround(n):
      if not res:
           returnHome(n,False)
           return False
-          
+
      claw.grabClawSync()
      drive.driveRotateToAngle(afterangles[n])
      returnHome(n)
      cnt += 1
-     
+
 def getNthCubePlatform(n):
      res = goToCube(n)
      if not res:
@@ -162,7 +173,7 @@ def getNthCubePlatform(n):
           claw.openClawSync()
           drive.driveStraightSync(-30,1)
           lift.lowerLiftSync()
-          
+
           res = orienting.approachCube()
           if not res:
                returnHome(n,False)
@@ -202,7 +213,7 @@ def selectCube():
           if cubes_retrieved[i]:
                chances[i] = 0
                continue
-          
+
           x,d = cube.nthCubePositionCorrect(i,cubepositions[i])
           if x == 0:
                chances[i] *= 0.5
@@ -216,5 +227,3 @@ def selectCube():
                high = i
 
      return i
-
-

@@ -22,7 +22,7 @@ class Cube():
             ry = args[2]
             ra = args[3]
         else:
-            return
+            raise TypeError
         #ra is the robot's angle, measured anticlockwise from x-axis
         
         #ra - marker.rot_y is the angle between the x-axis and the
